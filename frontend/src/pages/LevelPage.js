@@ -351,44 +351,89 @@ const LevelPage = () => {
               </CardContent>
             </Card>
 
-            <div className="flex space-x-3">
-              <Button
-                onClick={runCode}
-                disabled={isRunning}
-                className="bg-blue-500 hover:bg-blue-600 text-white flex-1"
-                data-testid="run-code"
-              >
-                {isRunning ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
-                    Running...
-                  </>
-                ) : (
-                  <>
+            {/* Action Buttons */}
+            {result && result.success ? (
+              // Show success state with Next Level button
+              <div className="space-y-3">
+                <div className="flex space-x-3">
+                  <Button
+                    onClick={() => navigate(`/level/${parseInt(levelId) + 1}`)}
+                    className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white flex-1"
+                    data-testid="next-level"
+                  >
+                    <ArrowRight className="mr-2 h-4 w-4" />
+                    Next Level ({parseInt(levelId) + 1})
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate('/dashboard')}
+                    data-testid="back-to-dashboard-success"
+                  >
+                    Dashboard
+                  </Button>
+                </div>
+                <div className="flex space-x-3">
+                  <Button
+                    variant="outline"
+                    onClick={runCode}
+                    disabled={isRunning}
+                    className="flex-1"
+                  >
                     <Play className="mr-2 h-4 w-4" />
-                    Run Code
-                  </>
-                )}
-              </Button>
-              <Button
-                onClick={submitSolution}
-                disabled={isSubmitting || !output}
-                className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white flex-1"
-                data-testid="submit-solution"
-              >
-                {isSubmitting ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle className="mr-2 h-4 w-4" />
-                    Submit Solution
-                  </>
-                )}
-              </Button>
-            </div>
+                    Run Again
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={resetCode}
+                    className="flex-1"
+                    data-testid="reset-and-retry"
+                  >
+                    <RotateCcw className="mr-2 h-4 w-4" />
+                    Reset & Retry
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              // Show default run/submit buttons
+              <div className="flex space-x-3">
+                <Button
+                  onClick={runCode}
+                  disabled={isRunning}
+                  className="bg-blue-500 hover:bg-blue-600 text-white flex-1"
+                  data-testid="run-code"
+                >
+                  {isRunning ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
+                      Running...
+                    </>
+                  ) : (
+                    <>
+                      <Play className="mr-2 h-4 w-4" />
+                      Run Code
+                    </>
+                  )}
+                </Button>
+                <Button
+                  onClick={submitSolution}
+                  disabled={isSubmitting || !output}
+                  className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white flex-1"
+                  data-testid="submit-solution"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="mr-2 h-4 w-4" />
+                      Submit Solution
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
 
             <Card className="glass-card border-0">
               <CardHeader>
