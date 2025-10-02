@@ -348,6 +348,14 @@ const LevelPage = () => {
               <BookOpen className="mr-2 h-4 w-4" />
               Tutorials
             </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowFeedback(!showFeedback)}
+              data-testid="toggle-feedback"
+            >
+              <MessageSquare className="mr-2 h-4 w-4" />
+              Feedback
+            </Button>
             {parseInt(levelId) > 100 && (
               <Button 
                 variant="outline" 
