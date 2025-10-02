@@ -52,7 +52,7 @@ const HomePage = () => {
           <div className=\"text-center\">
             <div className=\"flex justify-center mb-6\">
               <Badge variant=\"secondary\" className=\"text-orange-600 bg-orange-50 border-orange-200 px-4 py-2\">
-                🚀 Start Your Python Journey Today!
+                 Start Your Python Journey Today!
               </Badge>
             </div>
             <h1 className=\"text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-6\">

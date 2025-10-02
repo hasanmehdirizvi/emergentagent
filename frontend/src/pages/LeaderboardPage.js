@@ -280,7 +280,7 @@ const LeaderboardPage = () => {
                               )}
                             </div>
                             <div className=\"text-sm text-gray-600\">
-                              Level {entry.current_level} • {entry.completed_levels} completed
+                              Level {entry.current_level}  {entry.completed_levels} completed
                             </div>
                           </div>
                         </div>

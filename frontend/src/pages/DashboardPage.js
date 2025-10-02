@@ -224,7 +224,7 @@ const DashboardPage = () => {
                               {isCompleted && <CheckCircle className=\"inline ml-2 h-4 w-4 text-green-500\" />}
                             </CardTitle>
                             <CardDescription className=\"text-sm\">
-                              {level.category} • {level.xp_reward} XP
+                              {level.category}  {level.xp_reward} XP
                             </CardDescription>
                           </div>
                         </div>

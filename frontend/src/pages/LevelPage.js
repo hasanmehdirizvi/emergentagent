@@ -207,7 +207,7 @@ const LevelPage = () => {
       if (response.data.success) {
         toast.success(
           <div>
-            <div className=\"font-semibold\">🎉 Level Completed!</div>
+            <div className=\"font-semibold\"> Level Completed!</div>
             <div className=\"text-sm\">+{response.data.xp_earned || 0} XP earned</div>
           </div>
         );

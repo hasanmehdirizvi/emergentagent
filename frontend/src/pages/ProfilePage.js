@@ -28,14 +28,14 @@ const ProfilePage = () => {
   const [userProgress, setUserProgress] = useState({});
   const [loading, setLoading] = useState(true);
   const [achievements] = useState([
-    { id: 1, name: 'First Steps', icon: '🎯', description: 'Complete your first level', earned: true, earnedAt: '2024-01-15' },
-    { id: 2, name: 'Quick Learner', icon: '⚡', description: 'Complete 5 levels in one day', earned: false },
-    { id: 3, name: 'Dedication', icon: '📚', description: 'Complete 10 levels', earned: userStats?.completed_levels >= 10 },
-    { id: 4, name: 'Code Master', icon: '💻', description: 'Complete 25 levels', earned: userStats?.completed_levels >= 25 },
-    { id: 5, name: 'Python Expert', icon: '🐍', description: 'Complete 50 levels', earned: userStats?.completed_levels >= 50 },
-    { id: 6, name: 'Perfectionist', icon: '⭐', description: 'Get 3 stars on 10 levels', earned: false },
-    { id: 7, name: 'Speed Runner', icon: '🏃', description: 'Complete a level in under 5 minutes', earned: false },
-    { id: 8, name: 'Problem Solver', icon: '🧩', description: 'Complete all Easy levels', earned: false },
+    { id: 1, name: 'First Steps', icon: '', description: 'Complete your first level', earned: true, earnedAt: '2024-01-15' },
+    { id: 2, name: 'Quick Learner', icon: '', description: 'Complete 5 levels in one day', earned: false },
+    { id: 3, name: 'Dedication', icon: '', description: 'Complete 10 levels', earned: userStats?.completed_levels >= 10 },
+    { id: 4, name: 'Code Master', icon: '', description: 'Complete 25 levels', earned: userStats?.completed_levels >= 25 },
+    { id: 5, name: 'Python Expert', icon: '', description: 'Complete 50 levels', earned: userStats?.completed_levels >= 50 },
+    { id: 6, name: 'Perfectionist', icon: '', description: 'Get 3 stars on 10 levels', earned: false },
+    { id: 7, name: 'Speed Runner', icon: '', description: 'Complete a level in under 5 minutes', earned: false },
+    { id: 8, name: 'Problem Solver', icon: '', description: 'Complete all Easy levels', earned: false },
   ]);
 
   useEffect(() => {
