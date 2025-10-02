@@ -24,14 +24,45 @@ const HomePage = () => {
     }
   ];
 
-  const levels = [
-    { range: "100-149", title: "Python Basics", description: "Variables, data types, operators, input/output", difficulty: "Beginner" },
-    { range: "150-199", title: "Control Flow", description: "Conditions, loops, functions, error handling", difficulty: "Beginner" },
-    { range: "200-249", title: "Data Structures", description: "Lists, dictionaries, sets, tuples", difficulty: "Intermediate" },
-    { range: "250-299", title: "Object-Oriented Programming", description: "Classes, inheritance, polymorphism", difficulty: "Intermediate" },
-    { range: "300-349", title: "Libraries and APIs", description: "Working with external libraries and APIs", difficulty: "Advanced" },
-    { range: "350-400", title: "Real-World Projects", description: "Build complete applications and projects", difficulty: "Expert" }
+  const allLevels = [
+    { range: "100-149", title: "Python Basics", description: "Variables, data types, operators, input/output", difficulty: "Beginner", category: "programming" },
+    { range: "150-199", title: "Control Flow", description: "Conditions, loops, functions, error handling", difficulty: "Beginner", category: "programming" },
+    { range: "200-249", title: "Data Structures", description: "Lists, dictionaries, sets, tuples", difficulty: "Intermediate", category: "programming" },
+    { range: "250-299", title: "Object-Oriented Programming", description: "Classes, inheritance, polymorphism", difficulty: "Intermediate", category: "programming" },
+    { range: "300-349", title: "Libraries and APIs", description: "Working with external libraries and APIs", difficulty: "Advanced", category: "programming" },
+    { range: "350-400", title: "Real-World Projects", description: "Build complete applications and projects", difficulty: "Expert", category: "programming" },
+    
+    // Data Analyst Track
+    { range: "DA100-149", title: "Data Analysis Basics", description: "NumPy, Pandas fundamentals, data loading", difficulty: "Beginner", category: "data-analysis" },
+    { range: "DA150-199", title: "Data Manipulation", description: "Data cleaning, filtering, grouping operations", difficulty: "Beginner", category: "data-analysis" },
+    { range: "DA200-249", title: "Data Visualization", description: "Matplotlib, Seaborn, interactive plots", difficulty: "Intermediate", category: "data-analysis" },
+    { range: "DA250-299", title: "Statistical Analysis", description: "Descriptive stats, hypothesis testing", difficulty: "Intermediate", category: "data-analysis" },
+    { range: "DA300-349", title: "Machine Learning", description: "Scikit-learn, model building and evaluation", difficulty: "Advanced", category: "data-analysis" },
+    { range: "DA350-400", title: "Advanced Analytics", description: "Time series, deep learning, big data tools", difficulty: "Expert", category: "data-analysis" }
   ];
+
+  const [selectedDifficulties, setSelectedDifficulties] = useState(['Beginner', 'Intermediate', 'Advanced', 'Expert']);
+  const [selectedCategories, setSelectedCategories] = useState(['programming', 'data-analysis']);
+  
+  const filteredLevels = allLevels.filter(level => 
+    selectedDifficulties.includes(level.difficulty) && selectedCategories.includes(level.category)
+  );
+
+  const handleDifficultyChange = (difficulty) => {
+    setSelectedDifficulties(prev => 
+      prev.includes(difficulty) 
+        ? prev.filter(d => d !== difficulty)
+        : [...prev, difficulty]
+    );
+  };
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategories(prev => 
+      prev.includes(category) 
+        ? prev.filter(c => c !== category)
+        : [...prev, category]
+    );
+  };
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
