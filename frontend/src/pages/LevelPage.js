@@ -44,6 +44,8 @@ const LevelPage = () => {
   const [hintsUsed, setHintsUsed] = useState(0);
   const [showTutorials, setShowTutorials] = useState(false);
   const [userPoints, setUserPoints] = useState(100); // Starting points
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [feedback, setFeedback] = useState({ rating: 5, comment: '', category: 'general' });
 
   useEffect(() => {
     fetchLevel();
