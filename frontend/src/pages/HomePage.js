@@ -162,8 +162,62 @@ const HomePage = () => {
               Progress through 300+ levels designed to take you from Python newbie to coding expert.
             </p>
           </div>
+          
+          {/* Filter Controls */}
+          <div className="mb-12 p-6 bg-white/80 backdrop-blur-md rounded-2xl border border-white/20">
+            <h3 className="text-lg font-semibold mb-4">Filter Learning Paths</h3>
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Category Filter */}
+              <div>
+                <h4 className="text-sm font-medium mb-3 text-gray-700">Learning Tracks</h4>
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="programming"
+                      checked={selectedCategories.includes('programming')}
+                      onCheckedChange={() => handleCategoryChange('programming')}
+                    />
+                    <Label htmlFor="programming" className="text-sm">
+                      🐍 General Programming
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="data-analysis"
+                      checked={selectedCategories.includes('data-analysis')}
+                      onCheckedChange={() => handleCategoryChange('data-analysis')}
+                    />
+                    <Label htmlFor="data-analysis" className="text-sm">
+                      📊 Data Analysis & Science
+                    </Label>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Difficulty Filter */}
+              <div>
+                <h4 className="text-sm font-medium mb-3 text-gray-700">Difficulty Levels</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  {['Beginner', 'Intermediate', 'Advanced', 'Expert'].map(difficulty => (
+                    <div key={difficulty} className="flex items-center space-x-2">
+                      <Checkbox 
+                        id={difficulty.toLowerCase()}
+                        checked={selectedDifficulties.includes(difficulty)}
+                        onCheckedChange={() => handleDifficultyChange(difficulty)}
+                      />
+                      <Label htmlFor={difficulty.toLowerCase()} className="text-sm">
+                        {difficulty}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {levels.map((level, index) => (
+            {filteredLevels.map((level, index) => (
               <Card key={index} className="level-card border-0" data-testid={`curriculum-${index}`}>
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
@@ -174,7 +228,12 @@ const HomePage = () => {
                       {level.difficulty}
                     </Badge>
                   </div>
-                  <CardTitle className="text-lg font-semibold">{level.title}</CardTitle>
+                  <div className="flex items-center space-x-2 mb-2">
+                    <span className="text-lg">
+                      {level.category === 'data-analysis' ? '📊' : '🐍'}
+                    </span>
+                    <CardTitle className="text-lg font-semibold">{level.title}</CardTitle>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="text-gray-600">
@@ -183,6 +242,10 @@ const HomePage = () => {
                   <div className="flex items-center mt-4 text-sm text-gray-500">
                     <CheckCircle className="h-4 w-4 mr-1" />
                     <span>Interactive Challenges</span>
+                  </div>
+                  <div className="flex items-center mt-2 text-sm text-gray-500">
+                    <span className="mr-2">📝</span>
+                    <span>Notes & Hints Available</span>
                   </div>
                 </CardContent>
               </Card>
