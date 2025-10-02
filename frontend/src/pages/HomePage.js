@@ -8,6 +8,8 @@ import { Label } from '../components/ui/label';
 import { Code, Zap, Trophy, Users, ArrowRight, Play, CheckCircle, Star } from 'lucide-react';
 
 const HomePage = () => {
+  const navigate = useNavigate();
+  
   const features = [
     {
       icon: <Zap className="h-8 w-8 text-orange-500" />,
