@@ -458,6 +458,77 @@ const LevelPage = () => {
               </Card>
             )}
 
+            {/* Feedback Section */}
+            {showFeedback && (
+              <Card className="glass-card border-0 border-l-4 border-l-green-400">
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2 text-green-700">
+                    <MessageSquare className="h-5 w-5" />
+                    <span>Level Feedback</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                      How would you rate this level?
+                    </label>
+                    <div className="flex items-center space-x-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star
+                          key={star}
+                          className={`h-6 w-6 cursor-pointer transition-colors ${
+                            star <= feedback.rating
+                              ? 'text-yellow-500 fill-current'
+                              : 'text-gray-300'
+                          }`}
+                          onClick={() => setFeedback({ ...feedback, rating: star })}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                      Feedback Category
+                    </label>
+                    <Select value={feedback.category} onValueChange={(value) => setFeedback({ ...feedback, category: value })}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="general">General Feedback</SelectItem>
+                        <SelectItem value="difficulty">Difficulty Level</SelectItem>
+                        <SelectItem value="instructions">Instructions Clarity</SelectItem>
+                        <SelectItem value="bug">Bug Report</SelectItem>
+                        <SelectItem value="suggestion">Suggestion</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                      Your Comments
+                    </label>
+                    <Textarea
+                      placeholder="Tell us about your experience with this level..."
+                      value={feedback.comment}
+                      onChange={(e) => setFeedback({ ...feedback, comment: e.target.value })}
+                      className="min-h-[80px]"
+                    />
+                  </div>
+
+                  <Button 
+                    onClick={submitFeedback}
+                    className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white"
+                    data-testid="submit-feedback"
+                  >
+                    <Send className="mr-2 h-4 w-4" />
+                    Submit Feedback
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+
             <Card className="glass-card border-0">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
