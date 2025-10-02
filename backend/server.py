@@ -570,6 +570,46 @@ async def get_leaderboard(limit: int = 10):
     
     return leaderboard
 
+@app.post("/api/levels/{level_id}/feedback")
+async def submit_feedback(level_id: int, feedback_data: LevelFeedback, current_user: dict = Depends(get_current_user)):
+    try:
+        feedback_doc = {
+            "_id": str(uuid.uuid4()),
+            "level_id": level_id,
+            "user_id": current_user["_id"],
+            "username": current_user["username"],
+            "rating": feedback_data.rating,
+            "category": feedback_data.category,
+            "comment": feedback_data.comment,
+            "submitted_at": datetime.now(timezone.utc),
+            "status": "pending"  # pending, reviewed, resolved
+        }
+        
+        await feedback_collection.insert_one(feedback_doc)
+        
+        return {
+            "success": True,
+            "message": "Feedback submitted successfully",
+            "feedback_id": feedback_doc["_id"]
+        }
+    except Exception as e:
+        logger.error(f"Failed to submit feedback: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to submit feedback")
+
+@app.get("/api/admin/feedback")
+async def get_all_feedback(current_user: dict = Depends(get_current_user), skip: int = 0, limit: int = 50):
+    # Simple admin check - in production, you'd want proper role-based access
+    if current_user["username"] != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    feedback_cursor = feedback_collection.find().sort("submitted_at", -1).skip(skip).limit(limit)
+    feedback_list = await feedback_cursor.to_list(length=limit)
+    
+    return {
+        "feedback": feedback_list,
+        "total": await feedback_collection.count_documents({})
+    }
+
 @app.get("/api/health")
 async def health_check():
     return {"status": "healthy", "timestamp": datetime.now(timezone.utc)}
