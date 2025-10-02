@@ -34,6 +34,10 @@ const LevelPage = () => {
   const [showHints, setShowHints] = useState(false);
   const [attempts, setAttempts] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [notes, setNotes] = useState('');
+  const [hintsUsed, setHintsUsed] = useState(0);
+  const [showTutorials, setShowTutorials] = useState(false);
+  const [userPoints, setUserPoints] = useState(100); // Starting points
 
   useEffect(() => {
     fetchLevel();
