@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
+import { Checkbox } from '../components/ui/checkbox';
+import { Label } from '../components/ui/label';
 import { Code, Zap, Trophy, Users, ArrowRight, Play, CheckCircle, Star } from 'lucide-react';
 
 const HomePage = () => {
