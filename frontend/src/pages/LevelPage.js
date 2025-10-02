@@ -357,14 +357,25 @@ const LevelPage = () => {
               // Show success state with Next Level button
               <div className="space-y-3">
                 <div className="flex space-x-3">
-                  <Button
-                    onClick={() => navigate(`/level/${parseInt(levelId) + 1}`)}
-                    className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white flex-1"
-                    data-testid="next-level"
-                  >
-                    <ArrowRight className="mr-2 h-4 w-4" />
-                    Next Level ({parseInt(levelId) + 1})
-                  </Button>
+                  {parseInt(levelId) < 400 ? (
+                    <Button
+                      onClick={() => navigate(`/level/${parseInt(levelId) + 1}`)}
+                      className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white flex-1"
+                      data-testid="next-level"
+                    >
+                      <ArrowRight className="mr-2 h-4 w-4" />
+                      Next Level ({parseInt(levelId) + 1})
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => navigate('/dashboard')}
+                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white flex-1"
+                      data-testid="course-complete"
+                    >
+                      <Trophy className="mr-2 h-4 w-4" />
+                      Course Complete! 
+                    </Button>
+                  )}
                   <Button
                     variant="outline"
                     onClick={() => navigate('/dashboard')}
