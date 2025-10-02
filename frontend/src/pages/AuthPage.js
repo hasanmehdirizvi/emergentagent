@@ -63,7 +63,7 @@ const AuthPage = () => {
     try {
       const result = await signup(signupData.username, signupData.email, signupData.password);
       if (result.success) {
-        toast.success('Account created successfully! Welcome to PythonQuest! 🚀');
+        toast.success('Account created successfully! Welcome to PythonQuest!');
         navigate('/dashboard');
       } else {
         setError(result.error);
