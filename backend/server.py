@@ -190,9 +190,15 @@ async def init_levels():
             "xp_reward": 50,
             "starter_code": "# Welcome to Python! Type your code below\nprint(\"Hello, World!\")",
             "expected_output": "Hello, World!",
-            "hints": ["Use the print() function", "Put text inside quotes"],
+            "hints": [
+                "Use the print() function to display text",
+                "Put your text inside quotes (either single ' or double \")",
+                "Make sure the text matches exactly: Hello, World!"
+            ],
             "prerequisites": [],
-            "is_active": True
+            "is_active": True,
+            "problem_type": "basic",
+            "tutorial_links": ["print", "strings"]
         },
         {
             "_id": str(uuid.uuid4()),
