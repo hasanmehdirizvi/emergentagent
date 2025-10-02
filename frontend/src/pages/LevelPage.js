@@ -303,6 +303,15 @@ const LevelPage = () => {
               <BookOpen className="mr-2 h-4 w-4" />
               Tutorials
             </Button>
+            {parseInt(levelId) > 100 && (
+              <Button 
+                variant="outline" 
+                onClick={() => navigate(`/level/${parseInt(levelId) - 1}`)}
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Previous Level
+              </Button>
+            )}
           </div>
         </div>
 
