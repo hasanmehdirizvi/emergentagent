@@ -149,25 +149,24 @@ const LevelPage = () => {
               [start, end, step] = params;
             }
             
-            // Execute the loop and find the next indented line (loop body)
-            const nextLineIndex = lines.findIndex(l => l === line) + 1;
-            if (nextLineIndex < lines.length) {
-              const nextLine = lines[nextLineIndex];
+            // Check if there's a next line (loop body)
+            if (i + 1 < lines.length) {
+              const nextLine = lines[i + 1];
               if (nextLine.includes('print(')) {
                 // Execute the loop with the print statement
-                for (let i = start; i < end; i += step) {
-                  variables[varName] = i;
+                for (let loopVar = start; loopVar < end; loopVar += step) {
+                  variables[varName] = loopVar;
                   // Execute the print statement in the loop context
                   const printMatch = nextLine.match(/print\s*\(([^)]*)\)/);
                   if (printMatch) {
                     let content = printMatch[1].trim();
                     if (content === varName) {
-                      output.push(i.toString());
+                      output.push(loopVar.toString());
                     }
                   }
                 }
                 // Skip the next line since we processed it
-                continue;
+                skipNextLine = true;
               }
             }
           }
