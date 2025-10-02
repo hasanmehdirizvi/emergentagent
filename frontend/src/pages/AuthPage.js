@@ -253,7 +253,7 @@ const AuthPage = () => {
         {/* Demo Credentials */}
         <div className=\"text-center text-sm text-gray-500\">
           <p>New to programming? No worries!</p>
-          <p className=\"mt-1\">Start with Level 100 and learn step by step 🚀</p>
+          <p className=\"mt-1\">Start with Level 100 and learn step by step </p>
         </div>
       </div>
     </div>
