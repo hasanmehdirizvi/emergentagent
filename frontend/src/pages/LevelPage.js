@@ -471,9 +471,21 @@ const LevelPage = () => {
                       : 'border-orange-200 bg-orange-50'
                   }`}>
                     <AlertDescription className={result.success ? 'text-green-800' : 'text-orange-800'}>
-                      {result.message}
-                      {result.success && result.xp_earned > 0 && (
-                        <span className="ml-2 font-semibold">+{result.xp_earned} XP</span>
+                      {result.success ? (
+                        <div className="space-y-1">
+                          <div className="flex items-center space-x-2">
+                            <Trophy className="h-4 w-4 text-green-600" />
+                            <span className="font-bold">🎉 Level Completed Successfully!</span>
+                          </div>
+                          <div className="text-sm">
+                            You earned <span className="font-semibold text-green-700">+{result.xp_earned || 0} XP</span>
+                            {parseInt(levelId) < 400 && (
+                              <span> - Ready for Level {parseInt(levelId) + 1}?</span>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        result.message
                       )}
                     </AlertDescription>
                   </Alert>
