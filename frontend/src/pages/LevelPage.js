@@ -70,10 +70,12 @@ const LevelPage = () => {
 
   const executeSimplePython = (code) => {
     try {
+      console.log('Executing Python code:', code);
       const lines = code.split('\n').filter(line => 
         line.trim() && !line.trim().startsWith('#')
       );
       
+      console.log('Filtered lines:', lines);
       let output = [];
       let variables = {};
       
