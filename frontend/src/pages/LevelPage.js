@@ -81,12 +81,14 @@ const LevelPage = () => {
         line = line.trim();
         
         if (line.includes('print(')) {
-          const printMatch = line.match(/print\((.*)\)/);
+          const printMatch = line.match(/print\s*\(([^)]*)\)/);
           if (printMatch) {
-            let content = printMatch[1];
+            let content = printMatch[1].trim();
             
-            if (content.includes('"') || content.includes("'")) {
-              content = content.replace(/['"]/g, '');
+            // Handle string literals with quotes
+            if ((content.startsWith('"') && content.endsWith('"')) || 
+                (content.startsWith("'") && content.endsWith("'"))) {
+              content = content.slice(1, -1); // Remove quotes
               output.push(content);
             } else if (variables[content]) {
               output.push(variables[content].toString());
@@ -95,7 +97,9 @@ const LevelPage = () => {
                 const result = evaluateExpression(content, variables);
                 output.push(result.toString());
               } catch (e) {
-                output.push(content);
+                // If all else fails, just remove quotes and output as string
+                const cleanContent = content.replace(/['"]/g, '');
+                output.push(cleanContent);
               }
             }
           }
