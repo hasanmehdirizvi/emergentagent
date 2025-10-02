@@ -1,1 +1,159 @@
-import React from 'react';\nimport { Link, useNavigate } from 'react-router-dom';\nimport { useAuth } from '../contexts/AuthContext';\nimport { Button } from './ui/button';\nimport { Avatar, AvatarFallback } from './ui/avatar';\nimport { Progress } from './ui/progress';\nimport { Code, Trophy, User, LogOut, Home, BookOpen } from 'lucide-react';\nimport {\n  DropdownMenu,\n  DropdownMenuContent,\n  DropdownMenuItem,\n  DropdownMenuLabel,\n  DropdownMenuSeparator,\n  DropdownMenuTrigger,\n} from './ui/dropdown-menu';\n\nconst Navbar = () => {\n  const { currentUser, userStats, logout } = useAuth();\n  const navigate = useNavigate();\n\n  const handleLogout = async () => {\n    await logout();\n    navigate('/');\n  };\n\n  return (\n    <nav className=\"glass-card border-0 border-b border-white/20 sticky top-0 z-50\">\n      <div className=\"max-w-7xl mx-auto px-4 sm:px-6 lg:px-8\">\n        <div className=\"flex justify-between items-center h-16\">\n          {/* Logo */}\n          <Link\n            to={currentUser ? \"/dashboard\" : \"/\"}\n            className=\"flex items-center space-x-2 text-xl font-bold gradient-text hover:scale-105 transition-transform\"\n          >\n            <Code className=\"h-8 w-8\" />\n            <span className=\"font-extrabold\">PythonQuest</span>\n          </Link>\n\n          {/* Navigation Links */}\n          <div className=\"hidden md:flex items-center space-x-6\">\n            {currentUser ? (\n              <>\n                <Link\n                  to=\"/dashboard\"\n                  className=\"flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-white/20 transition-colors\"\n                  data-testid=\"nav-dashboard\"\n                >\n                  <Home className=\"h-4 w-4\" />\n                  <span>Dashboard</span>\n                </Link>\n                <Link\n                  to=\"/leaderboard\"\n                  className=\"flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-white/20 transition-colors\"\n                  data-testid=\"nav-leaderboard\"\n                >\n                  <Trophy className=\"h-4 w-4\" />\n                  <span>Leaderboard</span>\n                </Link>\n              </>\n            ) : (\n              <Link\n                to=\"/\"\n                className=\"flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-white/20 transition-colors\"\n                data-testid=\"nav-home\"\n              >\n                <BookOpen className=\"h-4 w-4\" />\n                <span>Home</span>\n              </Link>\n            )}\n          </div>\n\n          {/* User Section */}\n          <div className=\"flex items-center space-x-4\">\n            {currentUser ? (\n              <>\n                {/* XP Display */}\n                <div className=\"hidden sm:flex flex-col items-end space-y-1\">\n                  <div className=\"text-sm font-medium\" data-testid=\"user-xp\">\n                    Level {userStats?.current_level || 100} • {userStats?.total_xp || 0} XP\n                  </div>\n                  <div className=\"w-20\">\n                    <Progress \n                      value={((userStats?.total_xp || 0) % 100)} \n                      className=\"h-2\"\n                      data-testid=\"xp-progress\"\n                    />\n                  </div>\n                </div>\n\n                {/* User Menu */}\n                <DropdownMenu>\n                  <DropdownMenuTrigger asChild>\n                    <Button variant=\"ghost\" className=\"p-0 h-10 w-10\">\n                      <Avatar className=\"h-10 w-10\">\n                        <AvatarFallback className=\"bg-gradient-to-br from-orange-400 to-amber-500 text-white font-bold\">\n                          {currentUser.username?.charAt(0).toUpperCase()}\n                        </AvatarFallback>\n                      </Avatar>\n                    </Button>\n                  </DropdownMenuTrigger>\n                  <DropdownMenuContent className=\"w-56\" align=\"end\">\n                    <DropdownMenuLabel>\n                      <div className=\"flex flex-col space-y-1\">\n                        <p className=\"text-sm font-medium leading-none\" data-testid=\"user-name\">\n                          {currentUser.username}\n                        </p>\n                        <p className=\"text-xs leading-none text-muted-foreground\">\n                          {currentUser.email}\n                        </p>\n                      </div>\n                    </DropdownMenuLabel>\n                    <DropdownMenuSeparator />\n                    <DropdownMenuItem onClick={() => navigate('/profile')} data-testid=\"nav-profile\">\n                      <User className=\"mr-2 h-4 w-4\" />\n                      <span>Profile</span>\n                    </DropdownMenuItem>\n                    <DropdownMenuItem onClick={() => navigate('/dashboard')}>\n                      <Home className=\"mr-2 h-4 w-4\" />\n                      <span>Dashboard</span>\n                    </DropdownMenuItem>\n                    <DropdownMenuItem onClick={() => navigate('/leaderboard')}>\n                      <Trophy className=\"mr-2 h-4 w-4\" />\n                      <span>Leaderboard</span>\n                    </DropdownMenuItem>\n                    <DropdownMenuSeparator />\n                    <DropdownMenuItem onClick={handleLogout} data-testid=\"logout-button\">\n                      <LogOut className=\"mr-2 h-4 w-4\" />\n                      <span>Log out</span>\n                    </DropdownMenuItem>\n                  </DropdownMenuContent>\n                </DropdownMenu>\n              </>\n            ) : (\n              <div className=\"flex items-center space-x-3\">\n                <Button \n                  variant=\"ghost\" \n                  onClick={() => navigate('/auth')}\n                  className=\"hover:bg-white/20\"\n                  data-testid=\"login-button\"\n                >\n                  Login\n                </Button>\n                <Button\n                  onClick={() => navigate('/auth')}\n                  className=\"bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-medium px-6 glow-effect\"\n                  data-testid=\"signup-button\"\n                >\n                  Get Started\n                </Button>\n              </div>\n            )}\n          </div>\n        </div>\n      </div>\n    </nav>\n  );\n};\n\nexport default Navbar;"
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { Button } from './ui/button';
+import { Avatar, AvatarFallback } from './ui/avatar';
+import { Progress } from './ui/progress';
+import { Code, Trophy, User, LogOut, Home, BookOpen } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
+
+const Navbar = () => {
+  const { currentUser, userStats, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
+
+  return (
+    <nav className=\"glass-card border-0 border-b border-white/20 sticky top-0 z-50\">
+      <div className=\"max-w-7xl mx-auto px-4 sm:px-6 lg:px-8\">
+        <div className=\"flex justify-between items-center h-16\">
+          {/* Logo */}
+          <Link
+            to={currentUser ? \"/dashboard\" : \"/\"}
+            className=\"flex items-center space-x-2 text-xl font-bold gradient-text hover:scale-105 transition-transform\"
+          >
+            <Code className=\"h-8 w-8\" />
+            <span className=\"font-extrabold\">PythonQuest</span>
+          </Link>
+
+          {/* Navigation Links */}
+          <div className=\"hidden md:flex items-center space-x-6\">
+            {currentUser ? (
+              <>
+                <Link
+                  to=\"/dashboard\"
+                  className=\"flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-white/20 transition-colors\"
+                  data-testid=\"nav-dashboard\"
+                >
+                  <Home className=\"h-4 w-4\" />
+                  <span>Dashboard</span>
+                </Link>
+                <Link
+                  to=\"/leaderboard\"
+                  className=\"flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-white/20 transition-colors\"
+                  data-testid=\"nav-leaderboard\"
+                >
+                  <Trophy className=\"h-4 w-4\" />
+                  <span>Leaderboard</span>
+                </Link>
+              </>
+            ) : (
+              <Link
+                to=\"/\"
+                className=\"flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-white/20 transition-colors\"
+                data-testid=\"nav-home\"
+              >
+                <BookOpen className=\"h-4 w-4\" />
+                <span>Home</span>
+              </Link>
+            )}
+          </div>
+
+          {/* User Section */}
+          <div className=\"flex items-center space-x-4\">
+            {currentUser ? (
+              <>
+                {/* XP Display */}
+                <div className=\"hidden sm:flex flex-col items-end space-y-1\">
+                  <div className=\"text-sm font-medium\" data-testid=\"user-xp\">
+                    Level {userStats?.current_level || 100} • {userStats?.total_xp || 0} XP
+                  </div>
+                  <div className=\"w-20\">
+                    <Progress 
+                      value={((userStats?.total_xp || 0) % 100)} 
+                      className=\"h-2\"
+                      data-testid=\"xp-progress\"
+                    />
+                  </div>
+                </div>
+
+                {/* User Menu */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant=\"ghost\" className=\"p-0 h-10 w-10\">
+                      <Avatar className=\"h-10 w-10\">
+                        <AvatarFallback className=\"bg-gradient-to-br from-orange-400 to-amber-500 text-white font-bold\">
+                          {currentUser.username?.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className=\"w-56\" align=\"end\">
+                    <DropdownMenuLabel>
+                      <div className=\"flex flex-col space-y-1\">
+                        <p className=\"text-sm font-medium leading-none\" data-testid=\"user-name\">
+                          {currentUser.username}
+                        </p>
+                        <p className=\"text-xs leading-none text-muted-foreground\">
+                          {currentUser.email}
+                        </p>
+                      </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => navigate('/profile')} data-testid=\"nav-profile\">
+                      <User className=\"mr-2 h-4 w-4\" />
+                      <span>Profile</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                      <Home className=\"mr-2 h-4 w-4\" />
+                      <span>Dashboard</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/leaderboard')}>
+                      <Trophy className=\"mr-2 h-4 w-4\" />
+                      <span>Leaderboard</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleLogout} data-testid=\"logout-button\">
+                      <LogOut className=\"mr-2 h-4 w-4\" />
+                      <span>Log out</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            ) : (
+              <div className=\"flex items-center space-x-3\">
+                <Button 
+                  variant=\"ghost\" 
+                  onClick={() => navigate('/auth')}
+                  className=\"hover:bg-white/20\"
+                  data-testid=\"login-button\"
+                >
+                  Login
+                </Button>
+                <Button
+                  onClick={() => navigate('/auth')}
+                  className=\"bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-medium px-6 glow-effect\"
+                  data-testid=\"signup-button\"
+                >
+                  Get Started
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+};
+
+export default Navbar;"
