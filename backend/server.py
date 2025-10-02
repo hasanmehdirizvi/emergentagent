@@ -252,9 +252,60 @@ async def init_levels():
             "xp_reward": 125,
             "starter_code": "# For loops\n# Print numbers 1 through 5\nfor i in # Your code here:\n    print(i)",
             "expected_output": "1\n2\n3\n4\n5",
-            "hints": ["Use range() function", "range(1, 6) gives numbers 1 to 5"],
+            "hints": [
+                "Use the range() function to generate numbers",
+                "range(1, 6) gives numbers 1 to 5 (end is exclusive)",
+                "Complete syntax: for i in range(1, 6):"
+            ],
             "prerequisites": [103],
-            "is_active": True
+            "is_active": True,
+            "problem_type": "basic",
+            "tutorial_links": ["loops", "functions"]
+        },
+        {
+            "_id": str(uuid.uuid4()),
+            "level_id": 105,
+            "title": "Build a Calculator",
+            "description": "Create a comprehensive calculator that can perform addition, subtraction, multiplication, and division. Handle user input and provide a menu system.",
+            "category": "Comprehensive Project",
+            "difficulty": "Hard",
+            "xp_reward": 200,
+            "starter_code": "# Build a Calculator\n# Create functions for basic operations and a menu system\n\ndef add(x, y):\n    # Your code here\n    pass\n\ndef subtract(x, y):\n    # Your code here\n    pass\n\ndef multiply(x, y):\n    # Your code here\n    pass\n\ndef divide(x, y):\n    # Your code here\n    pass\n\n# Main program\nprint(\"Calculator Menu:\")\nprint(\"1. Add\")\nprint(\"2. Subtract\")\nprint(\"3. Multiply\")\nprint(\"4. Divide\")\n\n# Get user choice and numbers\n# Perform calculation and display result",
+            "expected_output": "Calculator Menu:\n1. Add\n2. Subtract\n3. Multiply\n4. Divide",
+            "hints": [
+                "Define each function to return the result of the operation",
+                "Use input() to get user choices and numbers",
+                "Convert string inputs to numbers using int() or float()",
+                "Handle division by zero with an if statement",
+                "Use if-elif-else to handle menu choices"
+            ],
+            "prerequisites": [104],
+            "is_active": True,
+            "problem_type": "comprehensive",
+            "tutorial_links": ["functions", "variables", "loops"]
+        },
+        # Data Analyst Track
+        {
+            "_id": str(uuid.uuid4()),
+            "level_id": 200,
+            "title": "Data Analysis Basics",
+            "description": "Learn to work with data using Python lists. Calculate basic statistics like mean, median, and mode from a dataset.",
+            "category": "Data Analysis",
+            "difficulty": "Medium",
+            "xp_reward": 150,
+            "starter_code": "# Data Analysis with Lists\ndata = [85, 92, 78, 96, 85, 88, 79, 92, 88, 84]\n\n# Calculate mean\nmean = # Your code here\n\n# Find maximum and minimum\nmax_value = # Your code here\nmin_value = # Your code here\n\n# Print results\nprint(f\"Dataset: {data}\")\nprint(f\"Mean: {mean}\")\nprint(f\"Maximum: {max_value}\")\nprint(f\"Minimum: {min_value}\")",
+            "expected_output": "Dataset: [85, 92, 78, 96, 85, 88, 79, 92, 88, 84]\nMean: 86.7\nMaximum: 96\nMinimum: 78",
+            "hints": [
+                "Use sum(data) to add all numbers in the list",
+                "Use len(data) to get the count of items",
+                "Mean = sum / count",
+                "Use max(data) and min(data) for maximum and minimum",
+                "Round the mean to 1 decimal place"
+            ],
+            "prerequisites": [104],
+            "is_active": True,
+            "problem_type": "data_analysis",
+            "tutorial_links": ["lists", "functions", "statistics"]
         }
     ]
     
