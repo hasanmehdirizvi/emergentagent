@@ -421,6 +421,33 @@ const LevelPage = () => {
           </div>
 
           <div className="space-y-6">
+            {/* Notes Section */}
+            <Card className="glass-card border-0">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <FileText className="h-5 w-5 text-purple-500" />
+                  <span>My Notes</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Textarea
+                  placeholder="Write your notes about this level... (e.g., key concepts, reminders, solution approach)"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  className="min-h-[100px] resize-none"
+                  data-testid="level-notes"
+                />
+                <div className="flex justify-between items-center mt-2">
+                  <span className="text-xs text-gray-500">
+                    Notes are saved automatically
+                  </span>
+                  <span className="text-xs text-gray-500">
+                    {notes.length}/500 characters
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+            
             <Card className="glass-card border-0">
               <CardHeader>
                 <div className="flex items-center justify-between">
