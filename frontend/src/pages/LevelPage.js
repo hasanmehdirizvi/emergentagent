@@ -22,7 +22,10 @@ import {
   BookOpen,
   FileText,
   ExternalLink,
-  Minus
+  Minus,
+  MessageSquare,
+  Send,
+  Star
 } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios';
