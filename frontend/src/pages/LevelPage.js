@@ -130,7 +130,7 @@ const LevelPage = () => {
             }
           }
         } else if (line.includes('for') && line.includes('range(')) {
-          const rangeMatch = line.match(/for\s+(\w+)\s+in\s+range\((.*)\)/);
+          const rangeMatch = line.match(/for\s+(\w+)\s+in\s+range\((.*)\):/);
           if (rangeMatch) {
             const [, varName, rangeParams] = rangeMatch;
             const params = rangeParams.split(',').map(p => parseInt(p.trim()));
@@ -142,9 +142,26 @@ const LevelPage = () => {
               [start, end, step] = params;
             }
             
-            for (let i = start; i < end; i += step) {
-              variables[varName] = i;
-              output.push(i.toString());
+            // Execute the loop and find the next indented line (loop body)
+            const nextLineIndex = lines.findIndex(l => l === line) + 1;
+            if (nextLineIndex < lines.length) {
+              const nextLine = lines[nextLineIndex];
+              if (nextLine.includes('print(')) {
+                // Execute the loop with the print statement
+                for (let i = start; i < end; i += step) {
+                  variables[varName] = i;
+                  // Execute the print statement in the loop context
+                  const printMatch = nextLine.match(/print\s*\(([^)]*)\)/);
+                  if (printMatch) {
+                    let content = printMatch[1].trim();
+                    if (content === varName) {
+                      output.push(i.toString());
+                    }
+                  }
+                }
+                // Skip the next line since we processed it
+                continue;
+              }
             }
           }
         }
