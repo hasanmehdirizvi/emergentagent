@@ -138,8 +138,11 @@ const LevelPage = () => {
         }
       }
       
-      return output.join('\n') || 'No output';
+      const finalOutput = output.join('\n') || 'No output';
+      console.log('Final output:', finalOutput);
+      return finalOutput;
     } catch (error) {
+      console.error('Execution error:', error);
       throw new Error('Execution failed: ' + error.message);
     }
   };
