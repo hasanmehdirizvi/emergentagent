@@ -177,7 +177,8 @@ async def init_levels():
     # Check if levels already exist
     existing_count = await levels_collection.count_documents({})
     if existing_count > 0:
-        return
+        # Clear existing levels to add enhanced ones
+        await levels_collection.delete_many({})
     
     sample_levels = [
         {
