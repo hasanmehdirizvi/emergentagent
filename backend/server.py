@@ -45,6 +45,7 @@ db = client[DB_NAME]
 users_collection = db.users
 levels_collection = db.levels
 user_progress_collection = db.user_progress
+feedback_collection = db.feedback
 
 # Pydantic Models
 class User(BaseModel):
