@@ -76,7 +76,7 @@ const Navbar = () => {
                 {/* XP Display */}
                 <div className="hidden sm:flex flex-col items-end space-y-1">
                   <div className="text-sm font-medium" data-testid="user-xp">
-                    Level {userStats?.current_level || 100} • {userStats?.total_xp || 0} XP
+                    Level {userStats?.current_level || 100} - {userStats?.total_xp || 0} XP
                   </div>
                   <div className="w-20">
                     <Progress 
