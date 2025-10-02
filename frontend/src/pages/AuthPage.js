@@ -1,1 +1,263 @@
-import React, { useState } from 'react';\nimport { useNavigate } from 'react-router-dom';\nimport { useAuth } from '../contexts/AuthContext';\nimport { Button } from '../components/ui/button';\nimport { Input } from '../components/ui/input';\nimport { Label } from '../components/ui/label';\nimport { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';\nimport { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';\nimport { Alert, AlertDescription } from '../components/ui/alert';\nimport { Loader2, Code, Mail, Lock, User } from 'lucide-react';\nimport { toast } from 'sonner';\n\nconst AuthPage = () => {\n  const [isLoading, setIsLoading] = useState(false);\n  const [error, setError] = useState('');\n  const [loginData, setLoginData] = useState({ email: '', password: '' });\n  const [signupData, setSignupData] = useState({ username: '', email: '', password: '', confirmPassword: '' });\n  \n  const { login, signup } = useAuth();\n  const navigate = useNavigate();\n\n  const handleLogin = async (e) => {\n    e.preventDefault();\n    setIsLoading(true);\n    setError('');\n\n    try {\n      const result = await login(loginData.email, loginData.password);\n      if (result.success) {\n        toast.success('Welcome back! 🎉');\n        navigate('/dashboard');\n      } else {\n        setError(result.error);\n        toast.error(result.error);\n      }\n    } catch (error) {\n      setError('Login failed. Please try again.');\n      toast.error('Login failed. Please try again.');\n    } finally {\n      setIsLoading(false);\n    }\n  };\n\n  const handleSignup = async (e) => {\n    e.preventDefault();\n    setIsLoading(true);\n    setError('');\n\n    if (signupData.password !== signupData.confirmPassword) {\n      setError('Passwords do not match');\n      setIsLoading(false);\n      toast.error('Passwords do not match');\n      return;\n    }\n\n    if (signupData.password.length < 6) {\n      setError('Password must be at least 6 characters long');\n      setIsLoading(false);\n      toast.error('Password must be at least 6 characters long');\n      return;\n    }\n\n    try {\n      const result = await signup(signupData.username, signupData.email, signupData.password);\n      if (result.success) {\n        toast.success('Account created successfully! Welcome to PythonQuest! 🚀');\n        navigate('/dashboard');\n      } else {\n        setError(result.error);\n        toast.error(result.error);\n      }\n    } catch (error) {\n      setError('Signup failed. Please try again.');\n      toast.error('Signup failed. Please try again.');\n    } finally {\n      setIsLoading(false);\n    }\n  };\n\n  return (\n    <div className=\"min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8\">\n      <div className=\"w-full max-w-md space-y-8\">\n        {/* Header */}\n        <div className=\"text-center\">\n          <div className=\"flex justify-center mb-4\">\n            <div className=\"p-3 rounded-full bg-gradient-to-br from-orange-400 to-amber-500\">\n              <Code className=\"h-8 w-8 text-white\" />\n            </div>\n          </div>\n          <h2 className=\"text-3xl font-bold gradient-text mb-2\">Welcome to PythonQuest</h2>\n          <p className=\"text-gray-600\">Start your Python learning journey today</p>\n        </div>\n\n        {/* Auth Forms */}\n        <Card className=\"glass-card border-0\">\n          <Tabs defaultValue=\"login\" className=\"w-full\">\n            <CardHeader className=\"pb-0\">\n              <TabsList className=\"grid w-full grid-cols-2 mb-4\">\n                <TabsTrigger value=\"login\" data-testid=\"login-tab\">Login</TabsTrigger>\n                <TabsTrigger value=\"signup\" data-testid=\"signup-tab\">Sign Up</TabsTrigger>\n              </TabsList>\n            </CardHeader>\n\n            <CardContent>\n              {error && (\n                <Alert className=\"mb-4 border-red-200 bg-red-50\" data-testid=\"auth-error\">\n                  <AlertDescription className=\"text-red-800\">{error}</AlertDescription>\n                </Alert>\n              )}\n\n              {/* Login Form */}\n              <TabsContent value=\"login\" className=\"space-y-4\">\n                <form onSubmit={handleLogin} className=\"space-y-4\">\n                  <div className=\"space-y-2\">\n                    <Label htmlFor=\"login-email\">Email</Label>\n                    <div className=\"relative\">\n                      <Mail className=\"absolute left-3 top-3 h-4 w-4 text-gray-400\" />\n                      <Input\n                        id=\"login-email\"\n                        type=\"email\"\n                        placeholder=\"Enter your email\"\n                        className=\"pl-10\"\n                        value={loginData.email}\n                        onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}\n                        required\n                        data-testid=\"login-email\"\n                      />\n                    </div>\n                  </div>\n                  <div className=\"space-y-2\">\n                    <Label htmlFor=\"login-password\">Password</Label>\n                    <div className=\"relative\">\n                      <Lock className=\"absolute left-3 top-3 h-4 w-4 text-gray-400\" />\n                      <Input\n                        id=\"login-password\"\n                        type=\"password\"\n                        placeholder=\"Enter your password\"\n                        className=\"pl-10\"\n                        value={loginData.password}\n                        onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}\n                        required\n                        data-testid=\"login-password\"\n                      />\n                    </div>\n                  </div>\n                  <Button\n                    type=\"submit\"\n                    className=\"w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600\"\n                    disabled={isLoading}\n                    data-testid=\"login-submit\"\n                  >\n                    {isLoading ? (\n                      <>\n                        <Loader2 className=\"mr-2 h-4 w-4 animate-spin\" />\n                        Logging in...\n                      </>\n                    ) : (\n                      'Login'\n                    )}\n                  </Button>\n                </form>\n              </TabsContent>\n\n              {/* Signup Form */}\n              <TabsContent value=\"signup\" className=\"space-y-4\">\n                <form onSubmit={handleSignup} className=\"space-y-4\">\n                  <div className=\"space-y-2\">\n                    <Label htmlFor=\"signup-username\">Username</Label>\n                    <div className=\"relative\">\n                      <User className=\"absolute left-3 top-3 h-4 w-4 text-gray-400\" />\n                      <Input\n                        id=\"signup-username\"\n                        type=\"text\"\n                        placeholder=\"Choose a username\"\n                        className=\"pl-10\"\n                        value={signupData.username}\n                        onChange={(e) => setSignupData({ ...signupData, username: e.target.value })}\n                        required\n                        data-testid=\"signup-username\"\n                      />\n                    </div>\n                  </div>\n                  <div className=\"space-y-2\">\n                    <Label htmlFor=\"signup-email\">Email</Label>\n                    <div className=\"relative\">\n                      <Mail className=\"absolute left-3 top-3 h-4 w-4 text-gray-400\" />\n                      <Input\n                        id=\"signup-email\"\n                        type=\"email\"\n                        placeholder=\"Enter your email\"\n                        className=\"pl-10\"\n                        value={signupData.email}\n                        onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}\n                        required\n                        data-testid=\"signup-email\"\n                      />\n                    </div>\n                  </div>\n                  <div className=\"space-y-2\">\n                    <Label htmlFor=\"signup-password\">Password</Label>\n                    <div className=\"relative\">\n                      <Lock className=\"absolute left-3 top-3 h-4 w-4 text-gray-400\" />\n                      <Input\n                        id=\"signup-password\"\n                        type=\"password\"\n                        placeholder=\"Create a password\"\n                        className=\"pl-10\"\n                        value={signupData.password}\n                        onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}\n                        required\n                        minLength={6}\n                        data-testid=\"signup-password\"\n                      />\n                    </div>\n                  </div>\n                  <div className=\"space-y-2\">\n                    <Label htmlFor=\"signup-confirm-password\">Confirm Password</Label>\n                    <div className=\"relative\">\n                      <Lock className=\"absolute left-3 top-3 h-4 w-4 text-gray-400\" />\n                      <Input\n                        id=\"signup-confirm-password\"\n                        type=\"password\"\n                        placeholder=\"Confirm your password\"\n                        className=\"pl-10\"\n                        value={signupData.confirmPassword}\n                        onChange={(e) => setSignupData({ ...signupData, confirmPassword: e.target.value })}\n                        required\n                        data-testid=\"signup-confirm-password\"\n                      />\n                    </div>\n                  </div>\n                  <Button\n                    type=\"submit\"\n                    className=\"w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600\"\n                    disabled={isLoading}\n                    data-testid=\"signup-submit\"\n                  >\n                    {isLoading ? (\n                      <>\n                        <Loader2 className=\"mr-2 h-4 w-4 animate-spin\" />\n                        Creating account...\n                      </>\n                    ) : (\n                      'Create Account'\n                    )}\n                  </Button>\n                </form>\n              </TabsContent>\n            </CardContent>\n          </Tabs>\n        </Card>\n\n        {/* Demo Credentials */}\n        <div className=\"text-center text-sm text-gray-500\">\n          <p>New to programming? No worries!</p>\n          <p className=\"mt-1\">Start with Level 100 and learn step by step 🚀</p>\n        </div>\n      </div>\n    </div>\n  );\n};\n\nexport default AuthPage;"
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { Alert, AlertDescription } from '../components/ui/alert';
+import { Loader2, Code, Mail, Lock, User } from 'lucide-react';
+import { toast } from 'sonner';
+
+const AuthPage = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [loginData, setLoginData] = useState({ email: '', password: '' });
+  const [signupData, setSignupData] = useState({ username: '', email: '', password: '', confirmPassword: '' });
+  
+  const { login, signup } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const result = await login(loginData.email, loginData.password);
+      if (result.success) {
+        toast.success('Welcome back! 🎉');
+        navigate('/dashboard');
+      } else {
+        setError(result.error);
+        toast.error(result.error);
+      }
+    } catch (error) {
+      setError('Login failed. Please try again.');
+      toast.error('Login failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
+
+    if (signupData.password !== signupData.confirmPassword) {
+      setError('Passwords do not match');
+      setIsLoading(false);
+      toast.error('Passwords do not match');
+      return;
+    }
+
+    if (signupData.password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      setIsLoading(false);
+      toast.error('Password must be at least 6 characters long');
+      return;
+    }
+
+    try {
+      const result = await signup(signupData.username, signupData.email, signupData.password);
+      if (result.success) {
+        toast.success('Account created successfully! Welcome to PythonQuest! 🚀');
+        navigate('/dashboard');
+      } else {
+        setError(result.error);
+        toast.error(result.error);
+      }
+    } catch (error) {
+      setError('Signup failed. Please try again.');
+      toast.error('Signup failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className=\"min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8\">
+      <div className=\"w-full max-w-md space-y-8\">
+        {/* Header */}
+        <div className=\"text-center\">
+          <div className=\"flex justify-center mb-4\">
+            <div className=\"p-3 rounded-full bg-gradient-to-br from-orange-400 to-amber-500\">
+              <Code className=\"h-8 w-8 text-white\" />
+            </div>
+          </div>
+          <h2 className=\"text-3xl font-bold gradient-text mb-2\">Welcome to PythonQuest</h2>
+          <p className=\"text-gray-600\">Start your Python learning journey today</p>
+        </div>
+
+        {/* Auth Forms */}
+        <Card className=\"glass-card border-0\">
+          <Tabs defaultValue=\"login\" className=\"w-full\">
+            <CardHeader className=\"pb-0\">
+              <TabsList className=\"grid w-full grid-cols-2 mb-4\">
+                <TabsTrigger value=\"login\" data-testid=\"login-tab\">Login</TabsTrigger>
+                <TabsTrigger value=\"signup\" data-testid=\"signup-tab\">Sign Up</TabsTrigger>
+              </TabsList>
+            </CardHeader>
+
+            <CardContent>
+              {error && (
+                <Alert className=\"mb-4 border-red-200 bg-red-50\" data-testid=\"auth-error\">
+                  <AlertDescription className=\"text-red-800\">{error}</AlertDescription>
+                </Alert>
+              )}
+
+              {/* Login Form */}
+              <TabsContent value=\"login\" className=\"space-y-4\">
+                <form onSubmit={handleLogin} className=\"space-y-4\">
+                  <div className=\"space-y-2\">
+                    <Label htmlFor=\"login-email\">Email</Label>
+                    <div className=\"relative\">
+                      <Mail className=\"absolute left-3 top-3 h-4 w-4 text-gray-400\" />
+                      <Input
+                        id=\"login-email\"
+                        type=\"email\"
+                        placeholder=\"Enter your email\"
+                        className=\"pl-10\"
+                        value={loginData.email}
+                        onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+                        required
+                        data-testid=\"login-email\"
+                      />
+                    </div>
+                  </div>
+                  <div className=\"space-y-2\">
+                    <Label htmlFor=\"login-password\">Password</Label>
+                    <div className=\"relative\">
+                      <Lock className=\"absolute left-3 top-3 h-4 w-4 text-gray-400\" />
+                      <Input
+                        id=\"login-password\"
+                        type=\"password\"
+                        placeholder=\"Enter your password\"
+                        className=\"pl-10\"
+                        value={loginData.password}
+                        onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                        required
+                        data-testid=\"login-password\"
+                      />
+                    </div>
+                  </div>
+                  <Button
+                    type=\"submit\"
+                    className=\"w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600\"
+                    disabled={isLoading}
+                    data-testid=\"login-submit\"
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className=\"mr-2 h-4 w-4 animate-spin\" />
+                        Logging in...
+                      </>
+                    ) : (
+                      'Login'
+                    )}
+                  </Button>
+                </form>
+              </TabsContent>
+
+              {/* Signup Form */}
+              <TabsContent value=\"signup\" className=\"space-y-4\">
+                <form onSubmit={handleSignup} className=\"space-y-4\">
+                  <div className=\"space-y-2\">
+                    <Label htmlFor=\"signup-username\">Username</Label>
+                    <div className=\"relative\">
+                      <User className=\"absolute left-3 top-3 h-4 w-4 text-gray-400\" />
+                      <Input
+                        id=\"signup-username\"
+                        type=\"text\"
+                        placeholder=\"Choose a username\"
+                        className=\"pl-10\"
+                        value={signupData.username}
+                        onChange={(e) => setSignupData({ ...signupData, username: e.target.value })}
+                        required
+                        data-testid=\"signup-username\"
+                      />
+                    </div>
+                  </div>
+                  <div className=\"space-y-2\">
+                    <Label htmlFor=\"signup-email\">Email</Label>
+                    <div className=\"relative\">
+                      <Mail className=\"absolute left-3 top-3 h-4 w-4 text-gray-400\" />
+                      <Input
+                        id=\"signup-email\"
+                        type=\"email\"
+                        placeholder=\"Enter your email\"
+                        className=\"pl-10\"
+                        value={signupData.email}
+                        onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
+                        required
+                        data-testid=\"signup-email\"
+                      />
+                    </div>
+                  </div>
+                  <div className=\"space-y-2\">
+                    <Label htmlFor=\"signup-password\">Password</Label>
+                    <div className=\"relative\">
+                      <Lock className=\"absolute left-3 top-3 h-4 w-4 text-gray-400\" />
+                      <Input
+                        id=\"signup-password\"
+                        type=\"password\"
+                        placeholder=\"Create a password\"
+                        className=\"pl-10\"
+                        value={signupData.password}
+                        onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
+                        required
+                        minLength={6}
+                        data-testid=\"signup-password\"
+                      />
+                    </div>
+                  </div>
+                  <div className=\"space-y-2\">
+                    <Label htmlFor=\"signup-confirm-password\">Confirm Password</Label>
+                    <div className=\"relative\">
+                      <Lock className=\"absolute left-3 top-3 h-4 w-4 text-gray-400\" />
+                      <Input
+                        id=\"signup-confirm-password\"
+                        type=\"password\"
+                        placeholder=\"Confirm your password\"
+                        className=\"pl-10\"
+                        value={signupData.confirmPassword}
+                        onChange={(e) => setSignupData({ ...signupData, confirmPassword: e.target.value })}
+                        required
+                        data-testid=\"signup-confirm-password\"
+                      />
+                    </div>
+                  </div>
+                  <Button
+                    type=\"submit\"
+                    className=\"w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600\"
+                    disabled={isLoading}
+                    data-testid=\"signup-submit\"
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className=\"mr-2 h-4 w-4 animate-spin\" />
+                        Creating account...
+                      </>
+                    ) : (
+                      'Create Account'
+                    )}
+                  </Button>
+                </form>
+              </TabsContent>
+            </CardContent>
+          </Tabs>
+        </Card>
+
+        {/* Demo Credentials */}
+        <div className=\"text-center text-sm text-gray-500\">
+          <p>New to programming? No worries!</p>
+          <p className=\"mt-1\">Start with Level 100 and learn step by step 🚀</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AuthPage;"
