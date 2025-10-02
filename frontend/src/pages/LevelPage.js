@@ -264,6 +264,22 @@ const LevelPage = () => {
     return tutorials[topic] || 'https://docs.python.org/3/tutorial/';
   };
 
+  const submitFeedback = async () => {
+    try {
+      await axios.post(`/api/levels/${levelId}/feedback`, {
+        ...feedback,
+        level_id: parseInt(levelId),
+        user_id: currentUser?.id
+      });
+      toast.success('Thank you for your feedback! 🙏');
+      setShowFeedback(false);
+      setFeedback({ rating: 5, comment: '', category: 'general' });
+    } catch (error) {
+      console.error('Failed to submit feedback:', error);
+      toast.error('Failed to submit feedback. Please try again.');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
