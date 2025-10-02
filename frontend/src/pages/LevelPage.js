@@ -215,6 +215,26 @@ const LevelPage = () => {
     toast.info('Code reset to starting template');
   };
 
+  const useHint = () => {
+    if (hintsUsed < (level.hints?.length || 0)) {
+      setHintsUsed(prev => prev + 1);
+      setUserPoints(prev => Math.max(0, prev - 10)); // Deduct 10 points per hint
+      setShowHints(true);
+      toast.warning(`Hint revealed! -10 points (${userPoints - 10} remaining)`);
+    }
+  };
+
+  const getTutorialLink = (topic) => {
+    const tutorials = {
+      'variables': 'https://docs.python.org/3/tutorial/introduction.html#using-python-as-a-calculator',
+      'print': 'https://docs.python.org/3/tutorial/inputoutput.html#fancier-output-formatting',
+      'strings': 'https://docs.python.org/3/tutorial/introduction.html#strings',
+      'loops': 'https://docs.python.org/3/tutorial/controlflow.html#for-statements',
+      'functions': 'https://docs.python.org/3/tutorial/controlflow.html#defining-functions'
+    };
+    return tutorials[topic] || 'https://docs.python.org/3/tutorial/';
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
