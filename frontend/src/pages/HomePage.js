@@ -95,6 +95,40 @@ const HomePage = () => {
               Master Python programming from Level 100 to 400 through interactive challenges, 
               earn XP, collect badges, and compete with learners worldwide.
             </p>
+            {/* Module Selection */}
+            <div className="mb-8">
+              <h3 className="text-xl font-semibold mb-6 text-gray-800">Choose Your Learning Path:</h3>
+              <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-8">
+                <Card className="level-card border-2 border-orange-200 hover:border-orange-400 cursor-pointer" onClick={() => navigate('/auth?module=programming')}>
+                  <CardContent className="pt-6 text-center">
+                    <div className="text-4xl mb-4">🐍</div>
+                    <h4 className="text-xl font-bold mb-2 text-gray-900">General Programming</h4>
+                    <p className="text-gray-600 text-sm">
+                      Learn Python fundamentals, control flow, OOP, and build real projects
+                    </p>
+                    <div className="mt-4">
+                      <Badge variant="outline" className="mr-2">Levels 100-400</Badge>
+                      <Badge className="bg-green-100 text-green-800">Beginner Friendly</Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <Card className="level-card border-2 border-blue-200 hover:border-blue-400 cursor-pointer" onClick={() => navigate('/auth?module=data-analysis')}>
+                  <CardContent className="pt-6 text-center">
+                    <div className="text-4xl mb-4">📊</div>
+                    <h4 className="text-xl font-bold mb-2 text-gray-900">Data Analysis & Science</h4>
+                    <p className="text-gray-600 text-sm">
+                      Master data manipulation, visualization, and machine learning with Python
+                    </p>
+                    <div className="mt-4">
+                      <Badge variant="outline" className="mr-2">Levels DA100-400</Badge>
+                      <Badge className="bg-blue-100 text-blue-800">Analytics Focused</Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+            
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
                 asChild
