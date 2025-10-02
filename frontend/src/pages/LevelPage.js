@@ -16,7 +16,11 @@ import {
   ArrowRight,
   Target,
   Code,
-  Trophy
+  Trophy,
+  BookOpen,
+  FileText,
+  ExternalLink,
+  Minus
 } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios';
