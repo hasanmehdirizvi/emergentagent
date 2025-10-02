@@ -34,7 +34,7 @@ import axios from 'axios';
 const LevelPage = () => {
   const { levelId } = useParams();
   const navigate = useNavigate();
-  const { updateUserStats } = useAuth();
+  const { currentUser, updateUserStats } = useAuth();
   const [level, setLevel] = useState(null);
   const [code, setCode] = useState('');
   const [output, setOutput] = useState('');
