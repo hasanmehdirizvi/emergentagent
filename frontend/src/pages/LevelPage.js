@@ -331,23 +331,76 @@ const LevelPage = () => {
               </CardContent>
             </Card>
 
-            {showHints && level.hints && level.hints.length > 0 && (
+            {/* Progressive Hints */}
+            {hintsUsed > 0 && level.hints && level.hints.length > 0 && (
               <Card className="glass-card border-0 border-l-4 border-l-amber-400">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2 text-amber-700">
                     <Lightbulb className="h-5 w-5" />
-                    <span>Hints</span>
+                    <span>Hints Used ({hintsUsed}/{level.hints.length})</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2">
-                  {level.hints.map((hint, index) => (
-                    <div key={index} className="flex items-start space-x-2">
-                      <span className="inline-block w-5 h-5 rounded-full bg-amber-100 text-amber-700 text-xs font-bold flex items-center justify-center mt-0.5">
-                        {index + 1}
-                      </span>
-                      <p className="text-amber-700">{hint}</p>
+                <CardContent className="space-y-3">
+                  {level.hints.slice(0, hintsUsed).map((hint, index) => (
+                    <div key={index} className="p-3 bg-amber-50 rounded-lg border border-amber-200">
+                      <div className="flex items-start space-x-2">
+                        <span className="inline-block w-6 h-6 rounded-full bg-amber-500 text-white text-xs font-bold flex items-center justify-center mt-0.5">
+                          {index + 1}
+                        </span>
+                        <p className="text-amber-800 font-medium">{hint}</p>
+                      </div>
                     </div>
                   ))}
+                  {hintsUsed < level.hints.length && (
+                    <div className="text-center pt-2">
+                      <p className="text-sm text-amber-600">
+                        {level.hints.length - hintsUsed} more hint(s) available
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Tutorials Section */}
+            {showTutorials && (
+              <Card className="glass-card border-0 border-l-4 border-l-blue-400">
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2 text-blue-700">
+                    <BookOpen className="h-5 w-5" />
+                    <span>Learning Resources</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="grid gap-3">
+                    <a 
+                      href={getTutorialLink('print')}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center space-x-2 p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                    >
+                      <ExternalLink className="h-4 w-4 text-blue-600" />
+                      <span className="text-blue-800 font-medium">Python Print Functions</span>
+                    </a>
+                    <a 
+                      href={getTutorialLink('variables')}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center space-x-2 p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                    >
+                      <ExternalLink className="h-4 w-4 text-blue-600" />
+                      <span className="text-blue-800 font-medium">Variables & Data Types</span>
+                    </a>
+                    <a 
+                      href={getTutorialLink('strings')}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center space-x-2 p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                    >
+                      <ExternalLink className="h-4 w-4 text-blue-600" />
+                      <span className="text-blue-800 font-medium">Working with Strings</span>
+                    </a>
+                  </div>
                 </CardContent>
               </Card>
             )}
