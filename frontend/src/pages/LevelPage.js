@@ -281,14 +281,29 @@ const LevelPage = () => {
             </div>
           </div>
           
-          <Button 
-            variant="outline" 
-            onClick={() => setShowHints(!showHints)}
-            data-testid="toggle-hints"
-          >
-            <Lightbulb className="mr-2 h-4 w-4" />
-            {showHints ? 'Hide' : 'Show'} Hints
-          </Button>
+          <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 px-3 py-1 bg-amber-100 rounded-full">
+              <Trophy className="h-4 w-4 text-amber-600" />
+              <span className="text-sm font-medium text-amber-800">{userPoints} points</span>
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={useHint}
+              disabled={hintsUsed >= (level?.hints?.length || 0)}
+              data-testid="use-hint"
+            >
+              <Lightbulb className="mr-2 h-4 w-4" />
+              Get Hint (-10 pts)
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowTutorials(!showTutorials)}
+              data-testid="toggle-tutorials"
+            >
+              <BookOpen className="mr-2 h-4 w-4" />
+              Tutorials
+            </Button>
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-6">
