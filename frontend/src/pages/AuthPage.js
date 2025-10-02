@@ -27,7 +27,7 @@ const AuthPage = () => {
     try {
       const result = await login(loginData.email, loginData.password);
       if (result.success) {
-        toast.success('Welcome back! 🎉');
+        toast.success('Welcome back!');
         navigate('/dashboard');
       } else {
         setError(result.error);
