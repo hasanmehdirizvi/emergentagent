@@ -15,7 +15,8 @@ import {
   ArrowLeft,
   ArrowRight,
   Target,
-  Code
+  Code,
+  Trophy
 } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios';
