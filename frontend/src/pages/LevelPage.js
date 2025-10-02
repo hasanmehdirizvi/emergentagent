@@ -13,6 +13,7 @@ import {
   XCircle,
   Lightbulb,
   ArrowLeft,
+  ArrowRight,
   Target,
   Code
 } from 'lucide-react';
