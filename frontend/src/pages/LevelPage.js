@@ -90,8 +90,15 @@ const LevelPage = () => {
       console.log('Filtered lines:', lines);
       let output = [];
       let variables = {};
+      let skipNextLine = false;
       
-      for (let line of lines) {
+      for (let i = 0; i < lines.length; i++) {
+        if (skipNextLine) {
+          skipNextLine = false;
+          continue;
+        }
+        
+        const line = lines[i];
         line = line.trim();
         
         if (line.includes('print(')) {
