@@ -41,26 +41,50 @@ import axios from 'axios';
 const AdminPage = () => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
+  
+  // Main state
+  const [activeTab, setActiveTab] = useState('feedback');
+  const [loading, setLoading] = useState(true);
+  
+  // Feedback Management State
   const [feedbackList, setFeedbackList] = useState([]);
   const [statistics, setStatistics] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [selectedFeedback, setSelectedFeedback] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
-  
-  // Filters
   const [filters, setFilters] = useState({
     status: '',
     category: '',
     level_id: '',
     user_id: ''
   });
-  
-  // Pagination
   const [pagination, setPagination] = useState({
     skip: 0,
     limit: 20,
     hasMore: false
   });
+
+  // User Management State
+  const [usersList, setUsersList] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showUserDetails, setShowUserDetails] = useState(false);
+  const [showPasswordReset, setShowPasswordReset] = useState(false);
+  
+  // Issue Tracking State (Provision for future Jira integration)
+  const [issues, setIssues] = useState([]);
+  const [showCreateIssue, setShowCreateIssue] = useState(false);
+  const [issueForm, setIssueForm] = useState({
+    title: '',
+    description: '',
+    priority: 'medium',
+    type: 'bug',
+    affectedUser: '',
+    codeFile: '',
+    codeError: ''
+  });
+  
+  // Module Testing State
+  const [testingMode, setTestingMode] = useState(false);
+  const [selectedModule, setSelectedModule] = useState('');
 
   useEffect(() => {
     // Check admin access
