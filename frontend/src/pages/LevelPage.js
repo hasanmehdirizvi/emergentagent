@@ -639,6 +639,70 @@ const LevelPage = () => {
               </Card>
             )}
 
+            {/* AI Tutor Section */}
+            {showAITutor && (
+              <Card className="glass-card border-0 border-l-4 border-l-purple-400">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center space-x-2 text-purple-700">
+                      <Brain className="h-5 w-5" />
+                      <span>AI Tutor</span>
+                      {userSubscription?.tier === 'pro' || userSubscription?.tier === 'enterprise' ? (
+                        <div className="flex items-center space-x-1">
+                          <Sparkles className="h-4 w-4 text-purple-500" />
+                          <Crown className="h-4 w-4 text-purple-500" />
+                        </div>
+                      ) : null}
+                    </CardTitle>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowAITutor(false)}
+                      className="text-gray-500 hover:text-gray-700"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {aiTutorLoading ? (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-2 border-purple-500 border-t-transparent" />
+                      <span className="ml-3 text-purple-700">AI is analyzing your challenge...</span>
+                    </div>
+                  ) : aiTutorError ? (
+                    <Alert className="border-red-200 bg-red-50">
+                      <AlertDescription className="text-red-800">
+                        <div className="flex items-center space-x-2">
+                          <XCircle className="h-4 w-4" />
+                          <span>{aiTutorError}</span>
+                        </div>
+                      </AlertDescription>
+                    </Alert>
+                  ) : null}
+                  
+                  {aiExplanation && (
+                    <div className="space-y-3">
+                      <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                        <div className="prose prose-sm max-w-none text-purple-900">
+                          <div className="whitespace-pre-wrap">{aiExplanation}</div>
+                        </div>
+                      </div>
+                      
+                      {userSubscription?.tier === 'free' && (
+                        <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded border">
+                          💡 <strong>Free Plan:</strong> {userSubscription.ai_tutor_remaining || 0} AI tutor uses remaining today. 
+                          <a href="/pricing" className="text-purple-600 hover:underline ml-1">
+                            Upgrade to Pro for unlimited access!
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
             <Card className="glass-card border-0">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
