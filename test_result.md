@@ -421,8 +421,7 @@ metadata:
 test_plan:
   current_focus:
     - "Data Analysis levels accessibility investigation"
-  stuck_tasks:
-    - "Data Analysis levels accessibility investigation"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
