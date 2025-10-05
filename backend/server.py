@@ -351,7 +351,7 @@ async def init_levels():
                 "Sort using sorted() with key parameter: sorted(sales_data, key=lambda x: x['quantity'], reverse=True)",
                 "Calculate revenue: sum(item['price'] * item['quantity'] for item in expensive_products)"
             ],
-            "prerequisites": [201],
+            "prerequisites": [],
             "is_active": True,
             "problem_type": "data_analysis",
             "tutorial_links": ["lists", "dictionaries", "sorting"]
