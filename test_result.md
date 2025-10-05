@@ -495,7 +495,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Expanded Data Analysis curriculum with 11 levels (200-210)"
+    - "Fully functional admin panel with all features implemented"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
