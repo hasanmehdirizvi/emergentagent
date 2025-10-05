@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { Progress } from './ui/progress';
-import { Code, Trophy, User, LogOut, Home, BookOpen } from 'lucide-react';
+import { Code, Trophy, User, LogOut, Home, BookOpen, Settings } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
