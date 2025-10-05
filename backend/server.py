@@ -302,7 +302,7 @@ async def init_levels():
             "category": "Data Analysis",
             "difficulty": "Medium",
             "xp_reward": 150,
-            "starter_code": "# Data Analysis with Lists\ndata = [85, 92, 78, 96, 85, 88, 79, 92, 88, 84]\n\n# Calculate mean\nmean = # Your code here\n\n# Find maximum and minimum\nmax_value = # Your code here\nmin_value = # Your code here\n\n# Print results\nprint(f\"Dataset: {data}\")\nprint(f\"Mean: {mean}\")\nprint(f\"Maximum: {max_value}\")\nprint(f\"Minimum: {min_value}\")",
+            "starter_code": "# Data Analysis Basics\n# Import statements for data analysis (learn about imports!)\nimport statistics  # For statistical functions\nimport math        # For mathematical operations\n\n# Let's work with a list of test scores\nscores = [85, 92, 78, 96, 88, 76, 91, 84, 89, 93]\n\n# Method 1: Calculate the mean manually\ntotal = sum(scores)  # Built-in sum() function\ncount = len(scores)  # Built-in len() function\nmean = total / count\n\n# Method 2: Using statistics module (more professional)\n# mean_stats = statistics.mean(scores)\n\n# Find the maximum and minimum scores\nmax_score = max(scores)  # Built-in max() function\nmin_score = min(scores)  # Built-in min() function\n\n# Print results rounded to 1 decimal place\nprint(f\"Mean: {round(mean, 1)}\")\nprint(f\"Max: {max_score}\")\nprint(f\"Min: {min_score}\")\n\n# Bonus: Try using the statistics module!\n# print(f\"Mean (statistics): {round(statistics.mean(scores), 1)}\")",
             "expected_output": "Dataset: [85, 92, 78, 96, 85, 88, 79, 92, 88, 84]\nMean: 86.7\nMaximum: 96\nMinimum: 78",
             "hints": [
                 "Use sum(data) to add all numbers in the list",
