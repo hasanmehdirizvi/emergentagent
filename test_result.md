@@ -127,7 +127,7 @@ backend:
     status_history:
       - working: "NA"
         agent: "main"
-        comment: "Basic admin feedback endpoint exists, needs enhancement for filtering and status updates"
+        comment: "Enhanced admin endpoints with filtering, status updates, and statistics - ready for testing"
 
 frontend:
   - task: "Feedback form in LevelPage"
