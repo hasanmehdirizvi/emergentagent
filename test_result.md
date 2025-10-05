@@ -495,10 +495,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "AI Tutor system with subscription tiers"
-    - "Enhanced challenge content with import statements"
-    - "Premium gamification features and topic jumping"
-    - "Subscription management and tier indicators"
+    - "Expanded Data Analysis curriculum with 11 levels (200-210)"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
