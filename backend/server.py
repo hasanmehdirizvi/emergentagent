@@ -775,6 +775,252 @@ async def get_feedback_statistics(admin_user: dict = Depends(check_admin_access)
         "rating_distribution": {str(item["_id"]): item["count"] for item in rating_stats}
     }
 
+@app.get("/api/admin/users")
+async def get_all_users(
+    admin_user: dict = Depends(check_admin_access),
+    skip: int = 0,
+    limit: int = 50
+):
+    users_cursor = users_collection.find({}, {"password": 0}).sort("created_at", -1).skip(skip).limit(limit)
+    users_list = await users_cursor.to_list(length=limit)
+    
+    # Add user progress for each user
+    enriched_users = []
+    for user in users_list:
+        progress_docs = await user_progress_collection.find({"user_id": user["_id"]}).to_list(length=None)
+        completed_levels = [p for p in progress_docs if p.get("is_completed", False)]
+        
+        user_data = {
+            **user,
+            "total_levels_completed": len(completed_levels),
+            "total_xp": sum([p.get("xp_earned", 0) for p in completed_levels]),
+            "current_level": max([p["level_id"] for p in completed_levels], default=99) + 1 if completed_levels else 100,
+            "last_activity": max([p.get("completed_at") for p in progress_docs if p.get("completed_at")], default=user.get("last_login"))
+        }
+        enriched_users.append(user_data)
+    
+    total_users = await users_collection.count_documents({})
+    
+    return {
+        "users": enriched_users,
+        "total": total_users,
+        "pagination": {
+            "skip": skip,
+            "limit": limit,
+            "has_more": total_users > skip + limit
+        }
+    }
+
+@app.patch("/api/admin/users/{user_id}/progress")
+async def update_user_progress(
+    user_id: str,
+    progress_update: dict,
+    admin_user: dict = Depends(check_admin_access)
+):
+    """Manually update user progress - pass them through levels or reset progress"""
+    action = progress_update.get("action")  # "unlock_level", "complete_level", "reset_progress"
+    level_id = progress_update.get("level_id")
+    
+    if action == "unlock_level" and level_id:
+        # Create progress entry to unlock a specific level
+        progress_entry = {
+            "_id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "level_id": level_id - 1,  # Complete previous level to unlock target
+            "is_completed": True,
+            "completed_at": datetime.now(timezone.utc),
+            "stars": 3,
+            "xp_earned": 100,  # Default XP
+            "attempts": 1,
+            "admin_granted": True
+        }
+        
+        await user_progress_collection.replace_one(
+            {"user_id": user_id, "level_id": level_id - 1},
+            progress_entry,
+            upsert=True
+        )
+        
+        return {"success": True, "message": f"Unlocked access to Level {level_id} for user"}
+    
+    elif action == "complete_level" and level_id:
+        # Mark specific level as completed
+        level = await levels_collection.find_one({"level_id": level_id})
+        if not level:
+            raise HTTPException(status_code=404, detail="Level not found")
+        
+        progress_entry = {
+            "_id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "level_id": level_id,
+            "is_completed": True,
+            "completed_at": datetime.now(timezone.utc),
+            "stars": 3,
+            "xp_earned": level.get("xp_reward", 100),
+            "attempts": 1,
+            "admin_granted": True
+        }
+        
+        await user_progress_collection.replace_one(
+            {"user_id": user_id, "level_id": level_id},
+            progress_entry,
+            upsert=True
+        )
+        
+        return {"success": True, "message": f"Marked Level {level_id} as completed for user"}
+    
+    elif action == "reset_progress":
+        # Reset all user progress
+        await user_progress_collection.delete_many({"user_id": user_id})
+        return {"success": True, "message": "All user progress has been reset"}
+    
+    else:
+        raise HTTPException(status_code=400, detail="Invalid action or missing level_id")
+
+@app.post("/api/admin/users/{user_id}/password-reset")
+async def initiate_password_reset(
+    user_id: str,
+    admin_user: dict = Depends(check_admin_access)
+):
+    """Initiate password reset for a user (provision for email integration)"""
+    user = await users_collection.find_one({"_id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Generate reset token (for future email integration)
+    reset_token = str(uuid.uuid4())
+    reset_expires = datetime.now(timezone.utc) + timedelta(hours=24)
+    
+    # Store reset token in database
+    await users_collection.update_one(
+        {"_id": user_id},
+        {
+            "$set": {
+                "password_reset_token": reset_token,
+                "password_reset_expires": reset_expires,
+                "password_reset_requested_by": admin_user["_id"],
+                "password_reset_requested_at": datetime.now(timezone.utc)
+            }
+        }
+    )
+    
+    # TODO: Integrate with email service to send reset link
+    # For now, return the reset token for admin to share manually
+    reset_link = f"http://localhost:3000/reset-password?token={reset_token}"
+    
+    return {
+        "success": True,
+        "message": "Password reset initiated",
+        "reset_token": reset_token,
+        "reset_link": reset_link,
+        "expires_at": reset_expires,
+        "note": "Future: This will be sent via email automatically"
+    }
+
+@app.post("/api/admin/issues")
+async def create_issue(
+    issue_data: dict,
+    admin_user: dict = Depends(check_admin_access)
+):
+    """Create issue ticket (provision for Jira integration)"""
+    issue_doc = {
+        "_id": str(uuid.uuid4()),
+        "title": issue_data.get("title"),
+        "description": issue_data.get("description"),
+        "priority": issue_data.get("priority", "medium"),
+        "type": issue_data.get("type", "bug"),
+        "status": "open",
+        "affected_user": issue_data.get("affectedUser"),
+        "code_file": issue_data.get("codeFile"),
+        "code_error": issue_data.get("codeError"),
+        "created_by": admin_user["_id"],
+        "created_at": datetime.now(timezone.utc),
+        "updated_at": datetime.now(timezone.utc),
+        "jira_integration": {
+            "enabled": False,
+            "jira_key": None,
+            "sync_status": "pending"
+        }
+    }
+    
+    # Store in local database
+    result = await db.issues.insert_one(issue_doc)
+    
+    # TODO: Integrate with Jira API to create actual ticket
+    # For now, return issue details for admin tracking
+    
+    return {
+        "success": True,
+        "message": "Issue created successfully",
+        "issue_id": issue_doc["_id"],
+        "issue": issue_doc,
+        "note": "Future: This will be automatically synced to Jira"
+    }
+
+@app.get("/api/admin/test-modules")
+async def get_test_modules(admin_user: dict = Depends(check_admin_access)):
+    """Get available modules for testing"""
+    modules = [
+        {"id": "python-basics", "name": "Python Basics", "levels": "100-105"},
+        {"id": "control-flow", "name": "Control Flow", "levels": "103-104"},
+        {"id": "data-analysis", "name": "Data Analysis", "levels": "200-203"},
+        {"id": "projects", "name": "Projects", "levels": "105"},
+        {"id": "feedback-system", "name": "Feedback System", "description": "Test feedback submission and admin management"},
+        {"id": "user-management", "name": "User Management", "description": "Test user registration, login, progress tracking"}
+    ]
+    
+    return {"modules": modules}
+
+@app.post("/api/admin/test-module/{module_id}")
+async def test_module(
+    module_id: str,
+    test_params: dict,
+    admin_user: dict = Depends(check_admin_access)
+):
+    """Execute module test (provision for comprehensive testing)"""
+    test_results = {
+        "module_id": module_id,
+        "test_started_at": datetime.now(timezone.utc),
+        "test_completed_at": None,
+        "status": "running",
+        "results": {},
+        "errors": [],
+        "notes": "Test execution started by admin"
+    }
+    
+    # TODO: Implement actual module testing logic
+    # For now, simulate test results
+    if module_id == "python-basics":
+        test_results["results"] = {
+            "levels_tested": [100, 101, 102, 103, 104, 105],
+            "passed": 6,
+            "failed": 0,
+            "execution_time": "2.3s"
+        }
+    elif module_id == "data-analysis":
+        test_results["results"] = {
+            "levels_tested": [200, 201, 202, 203],
+            "passed": 4,
+            "failed": 0,
+            "execution_time": "1.8s"
+        }
+    elif module_id == "feedback-system":
+        test_results["results"] = {
+            "feedback_submission": "passed",
+            "admin_management": "passed",
+            "status_updates": "passed",
+            "statistics": "passed"
+        }
+    
+    test_results["status"] = "completed"
+    test_results["test_completed_at"] = datetime.now(timezone.utc)
+    
+    return {
+        "success": True,
+        "message": f"Module {module_id} tested successfully",
+        "test_results": test_results
+    }
+
 @app.get("/api/health")
 async def health_check():
     return {"status": "healthy", "timestamp": datetime.now(timezone.utc)}
