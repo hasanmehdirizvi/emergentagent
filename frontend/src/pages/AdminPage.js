@@ -21,7 +21,19 @@ import {
   XCircle,
   Eye,
   RefreshCw,
-  ArrowLeft
+  ArrowLeft,
+  Settings,
+  Bug,
+  Mail,
+  Key,
+  PlayCircle,
+  UserPlus,
+  UserX,
+  Edit,
+  AlertTriangle,
+  FileText,
+  Code,
+  TestTube
 } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios';
