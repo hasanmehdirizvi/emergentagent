@@ -314,6 +314,69 @@ async def init_levels():
             "is_active": True,
             "problem_type": "data_analysis",
             "tutorial_links": ["lists", "functions", "statistics"]
+        },
+        {
+            "_id": str(uuid.uuid4()),
+            "level_id": 201,
+            "title": "Working with CSV Data",
+            "description": "Learn to read and process CSV data. Parse a simple dataset and extract meaningful information from it.",
+            "category": "Data Analysis",
+            "difficulty": "Medium",
+            "xp_reward": 175,
+            "starter_code": "# Working with CSV Data (simulated)\n# Sample CSV data as string\ncsv_data = \"Name,Age,City\\nAlice,25,New York\\nBob,30,San Francisco\\nCharlie,35,Chicago\\nDiana,28,Boston\"\n\n# Split the data into lines\nlines = csv_data.strip().split('\\n')\nheader = lines[0].split(',')\nrows = [line.split(',') for line in lines[1:]]\n\n# Extract ages and calculate average\nages = # Your code here\naverage_age = # Your code here\n\n# Count people by city\ncity_count = {}\nfor row in rows:\n    city = # Your code here\n    # Count cities here\n\nprint(f\"Average age: {average_age}\")\nprint(f\"Cities: {city_count}\")",
+            "expected_output": "Average age: 29.5\nCities: {'New York': 1, 'San Francisco': 1, 'Chicago': 1, 'Boston': 1}",
+            "hints": [
+                "Use list comprehension to extract ages: [int(row[1]) for row in rows]",
+                "Calculate average using sum(ages) / len(ages)",
+                "Access city using row[2] for each row",
+                "Use dictionary to count: city_count[city] = city_count.get(city, 0) + 1"
+            ],
+            "prerequisites": [200],
+            "is_active": True,
+            "problem_type": "data_analysis",
+            "tutorial_links": ["lists", "dictionaries", "csv"]
+        },
+        {
+            "_id": str(uuid.uuid4()),
+            "level_id": 202,
+            "title": "Data Filtering and Sorting",
+            "description": "Filter data based on conditions and sort datasets. Learn essential data manipulation techniques.",
+            "category": "Data Analysis",
+            "difficulty": "Medium",
+            "xp_reward": 175,
+            "starter_code": "# Data Filtering and Sorting\nsales_data = [\n    {'product': 'Laptop', 'price': 1200, 'quantity': 5},\n    {'product': 'Mouse', 'price': 25, 'quantity': 50},\n    {'product': 'Keyboard', 'price': 75, 'quantity': 30},\n    {'product': 'Monitor', 'price': 300, 'quantity': 15},\n    {'product': 'Headphones', 'price': 100, 'quantity': 25}\n]\n\n# Filter products with price > 50\nexpensive_products = # Your code here\n\n# Sort products by quantity (descending)\nsorted_by_quantity = # Your code here\n\n# Calculate total revenue for expensive products\ntotal_revenue = # Your code here\n\nprint(f\"Expensive products: {len(expensive_products)}\")\nprint(f\"Top product by quantity: {sorted_by_quantity[0]['product']}\")\nprint(f\"Total revenue (expensive): ${total_revenue}\")",
+            "expected_output": "Expensive products: 4\nTop product by quantity: Mouse\nTotal revenue (expensive): $13500",
+            "hints": [
+                "Filter using list comprehension: [item for item in sales_data if item['price'] > 50]",
+                "Sort using sorted() with key parameter: sorted(sales_data, key=lambda x: x['quantity'], reverse=True)",
+                "Calculate revenue: sum(item['price'] * item['quantity'] for item in expensive_products)"
+            ],
+            "prerequisites": [201],
+            "is_active": True,
+            "problem_type": "data_analysis",
+            "tutorial_links": ["lists", "dictionaries", "sorting"]
+        },
+        {
+            "_id": str(uuid.uuid4()),
+            "level_id": 203,
+            "title": "Statistical Analysis",
+            "description": "Perform advanced statistical calculations including median, mode, and standard deviation on datasets.",
+            "category": "Data Analysis",
+            "difficulty": "Hard",
+            "xp_reward": 200,
+            "starter_code": "# Statistical Analysis\nimport math\n\ntest_scores = [78, 85, 92, 78, 88, 95, 82, 78, 91, 87, 89, 94, 78, 83, 90]\n\n# Calculate median (middle value when sorted)\nsorted_scores = # Your code here\nn = len(sorted_scores)\nif n % 2 == 0:\n    median = # Your code here (average of two middle values)\nelse:\n    median = # Your code here (middle value)\n\n# Calculate mode (most frequent value)\nfrom collections import Counter\nscore_counts = Counter(test_scores)\nmode = # Your code here (most common score)\n\n# Calculate standard deviation\nmean = sum(test_scores) / len(test_scores)\nvariance = sum((x - mean) ** 2 for x in test_scores) / len(test_scores)\nstd_dev = # Your code here\n\nprint(f\"Median: {median}\")\nprint(f\"Mode: {mode}\")\nprint(f\"Standard Deviation: {round(std_dev, 2)}\")",
+            "expected_output": "Median: 87\nMode: 78\nStandard Deviation: 5.77",
+            "hints": [
+                "Sort the list using sorted(test_scores)",
+                "For even length: (sorted_scores[n//2-1] + sorted_scores[n//2]) / 2",
+                "For odd length: sorted_scores[n//2]",
+                "Mode: score_counts.most_common(1)[0][0]",
+                "Standard deviation: math.sqrt(variance)"
+            ],
+            "prerequisites": [202],
+            "is_active": True,
+            "problem_type": "data_analysis",
+            "tutorial_links": ["statistics", "math", "collections"]
         }
     ]
     
