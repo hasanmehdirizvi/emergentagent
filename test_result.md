@@ -189,10 +189,14 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Homepage Data Analysis module card navigation"
-    - "Dashboard category filtering for Data Analysis"
-    - "Data Analysis levels access and content"
-    - "Data Analysis level progression and prerequisites"
+    - "Admin user creation and authentication"
+    - "Admin panel access via profile menu"
+    - "Enhanced admin panel tabs functionality"
+    - "Overview tab statistics and quick actions"
+    - "Users tab management features"
+    - "Issues tab creation functionality"
+    - "Testing tab module testing"
+    - "Error scenarios and access control"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
