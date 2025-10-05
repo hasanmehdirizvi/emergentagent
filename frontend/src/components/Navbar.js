@@ -122,7 +122,7 @@ const Navbar = () => {
                       <Trophy className="mr-2 h-4 w-4" />
                       <span>Leaderboard</span>
                     </DropdownMenuItem>
-                    {(currentUser?.username === 'admin' || currentUser?.username === 'administrator') && (
+                    {currentUser?.username?.toLowerCase().includes('admin') && (
                       <DropdownMenuItem onClick={() => navigate('/admin')}>
                         <Settings className="mr-2 h-4 w-4" />
                         <span>Admin Panel</span>
