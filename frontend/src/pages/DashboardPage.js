@@ -18,7 +18,8 @@ import {
   Lock, 
   CheckCircle,
   Filter,
-  BarChart3
+  BarChart3,
+  Crown
 } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios';
