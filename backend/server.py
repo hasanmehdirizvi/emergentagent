@@ -373,7 +373,7 @@ async def init_levels():
                 "Mode: score_counts.most_common(1)[0][0]",
                 "Standard deviation: math.sqrt(variance)"
             ],
-            "prerequisites": [202],
+            "prerequisites": [],
             "is_active": True,
             "problem_type": "data_analysis",
             "tutorial_links": ["statistics", "math", "collections"]
