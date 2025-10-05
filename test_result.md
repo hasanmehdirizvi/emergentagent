@@ -116,6 +116,9 @@ backend:
       - working: true
         agent: "main"
         comment: "Feedback endpoint exists at /api/levels/{level_id}/feedback with proper validation and MongoDB integration"
+      - working: true
+        agent: "testing"
+        comment: "✅ FEEDBACK SUBMISSION FULLY TESTED: POST /api/levels/{level_id}/feedback working perfectly. Fixed LevelFeedback model to remove level_id from request body (taken from URL path). Validation working correctly for rating (1-5), required fields (category, comment). Proper authentication required. Unauthorized access correctly rejected. Feedback properly stored in MongoDB with correct structure including user info, timestamps, and pending status."
 
   - task: "Admin feedback management endpoints"
     implemented: true
