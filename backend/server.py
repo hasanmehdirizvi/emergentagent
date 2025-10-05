@@ -310,7 +310,7 @@ async def init_levels():
                 "Use max(data) and min(data) for maximum and minimum",
                 "Round the mean to 1 decimal place"
             ],
-            "prerequisites": [104],
+            "prerequisites": [],
             "is_active": True,
             "problem_type": "data_analysis",
             "tutorial_links": ["lists", "functions", "statistics"]
