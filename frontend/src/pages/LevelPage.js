@@ -26,7 +26,14 @@ import {
   Minus,
   MessageSquare,
   Send,
-  Star
+  Star,
+  Mail,
+  User,
+  X,
+  Brain,
+  Sparkles,
+  Crown,
+  Lock
 } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios';
