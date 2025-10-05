@@ -1312,6 +1312,250 @@ async def get_admin_dashboard_analytics(admin_user: dict = Depends(check_admin_a
         "last_updated": datetime.now(timezone.utc)
     }
 
+# AI Tutor System
+@app.post("/api/levels/{level_id}/ai-tutor")
+async def get_ai_tutor_explanation(
+    level_id: int,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get AI-powered explanation for a specific level/challenge"""
+    
+    # Get level details
+    level = await levels_collection.find_one({"level_id": level_id})
+    if not level:
+        raise HTTPException(status_code=404, detail="Level not found")
+    
+    # Check user subscription for advanced features
+    user = await users_collection.find_one({"_id": current_user["_id"]})
+    subscription_tier = user.get("subscription_tier", "free")
+    
+    try:
+        # Initialize AI chat
+        api_key = os.environ.get('EMERGENT_LLM_KEY')
+        if not api_key:
+            raise HTTPException(status_code=500, detail="AI service not configured")
+        
+        chat = LlmChat(
+            api_key=api_key,
+            session_id=f"tutor_{level_id}_{current_user['_id']}",
+            system_message="""You are an expert Python programming tutor. Your job is to explain programming concepts in a clear, engaging way with practical examples. 
+
+Key guidelines:
+1. Explain the concept clearly for beginners
+2. Provide 2-3 practical code examples
+3. Include common use cases and best practices
+4. Keep explanations concise but comprehensive
+5. Use encouraging and supportive tone
+6. Focus on the learning objective of the challenge
+
+Format your response with:
+- **Concept Explanation**: Clear overview
+- **Code Examples**: 2-3 practical examples with comments
+- **Common Use Cases**: Where this is used in real programming
+- **Tips**: Best practices and common mistakes to avoid"""
+        ).with_model("openai", "gpt-4o-mini")
+        
+        # Create detailed prompt based on level
+        prompt = f"""
+Explain this Python programming concept for a learning challenge:
+
+**Challenge Title**: {level['title']}
+**Description**: {level['description']}
+**Category**: {level['category']}
+**Difficulty**: {level['difficulty']}
+
+**Current Challenge Code**:
+```python
+{level['starter_code']}
+```
+
+**Expected Output**: {level['expected_output']}
+
+Please provide a comprehensive tutorial explanation that helps the user understand:
+1. The core concept being taught
+2. How to approach this type of problem
+3. Step-by-step breakdown with examples
+4. Import statements needed and why
+
+Make it educational and engaging for a {level['difficulty'].lower()} level programmer.
+"""
+
+        user_message = UserMessage(text=prompt)
+        ai_response = await chat.send_message(user_message)
+        
+        return {
+            "success": True,
+            "explanation": ai_response,
+            "level_title": level['title'],
+            "subscription_tier": subscription_tier,
+            "tutor_available": True
+        }
+        
+    except Exception as e:
+        print(f"AI Tutor Error: {str(e)}")
+        return {
+            "success": False,
+            "error": "AI tutor temporarily unavailable",
+            "fallback_explanation": f"This challenge focuses on {level['category']} concepts. Practice the provided code and check the hints for guidance.",
+            "subscription_tier": subscription_tier,
+            "tutor_available": False
+        }
+
+# User Subscription Management
+@app.get("/api/user/subscription")
+async def get_user_subscription(current_user: dict = Depends(get_current_user)):
+    """Get user's current subscription details"""
+    user = await users_collection.find_one({"_id": current_user["_id"]})
+    
+    subscription_tier = user.get("subscription_tier", "free")
+    subscription_features = {
+        "free": {
+            "tier": "free",
+            "price": 0,
+            "features": ["Basic Challenges", "Community Access", "Progress Tracking"],
+            "limitations": {
+                "ai_tutor_uses": 3,  # 3 uses per day
+                "topic_jumping": False,
+                "all_categories": False,
+                "advanced_hints": False
+            }
+        },
+        "pro": {
+            "tier": "pro", 
+            "price": 9.99,
+            "features": ["All Challenges", "Unlimited AI Tutor", "Topic Jumping", "All Categories", "Priority Support", "Certificates"],
+            "limitations": {
+                "ai_tutor_uses": -1,  # Unlimited
+                "topic_jumping": True,
+                "all_categories": True, 
+                "advanced_hints": True
+            }
+        },
+        "enterprise": {
+            "tier": "enterprise",
+            "price": 49.99,
+            "features": ["Everything in Pro", "Custom Tracks", "Team Management", "API Access", "White Label"],
+            "limitations": {
+                "ai_tutor_uses": -1,  # Unlimited
+                "topic_jumping": True,
+                "all_categories": True,
+                "advanced_hints": True,
+                "custom_tracks": True
+            }
+        }
+    }
+    
+    user_subscription = subscription_features.get(subscription_tier, subscription_features["free"])
+    
+    # Add usage tracking for free users
+    if subscription_tier == "free":
+        today = datetime.now(timezone.utc).date()
+        ai_tutor_usage = user.get("daily_ai_usage", {}).get(str(today), 0)
+        user_subscription["daily_ai_usage"] = ai_tutor_usage
+        user_subscription["ai_tutor_remaining"] = max(0, 3 - ai_tutor_usage)
+    
+    return user_subscription
+
+@app.patch("/api/user/subscription/upgrade")
+async def upgrade_subscription(
+    subscription_data: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """Upgrade user subscription (for testing - mock Stripe integration)"""
+    
+    new_tier = subscription_data.get("tier")
+    if new_tier not in ["free", "pro", "enterprise"]:
+        raise HTTPException(status_code=400, detail="Invalid subscription tier")
+    
+    # Update user subscription
+    await users_collection.update_one(
+        {"_id": current_user["_id"]},
+        {
+            "$set": {
+                "subscription_tier": new_tier,
+                "subscription_updated_at": datetime.now(timezone.utc),
+                "payment_method": subscription_data.get("payment_method", "test")
+            }
+        }
+    )
+    
+    return {
+        "success": True,
+        "message": f"Subscription upgraded to {new_tier}",
+        "new_tier": new_tier
+    }
+
+# Create sample paid users for testing
+@app.post("/api/admin/create-sample-users")
+async def create_sample_paid_users(admin_user: dict = Depends(check_admin_access)):
+    """Create sample users with different subscription tiers for testing"""
+    
+    sample_users = [
+        {
+            "_id": str(uuid.uuid4()),
+            "username": "free_user_demo",
+            "email": "free@pythonquest.com",
+            "password": pwd_context.hash("demo123"),
+            "subscription_tier": "free",
+            "profile": {
+                "current_level": 100,
+                "total_xp": 0,
+                "completed_levels": [],
+                "badges": []
+            },
+            "created_at": datetime.now(timezone.utc)
+        },
+        {
+            "_id": str(uuid.uuid4()),
+            "username": "pro_user_demo", 
+            "email": "pro@pythonquest.com",
+            "password": pwd_context.hash("demo123"),
+            "subscription_tier": "pro",
+            "profile": {
+                "current_level": 105,
+                "total_xp": 500,
+                "completed_levels": [100, 101, 102, 103, 104],
+                "badges": ["first_steps", "problem_solver"]
+            },
+            "created_at": datetime.now(timezone.utc)
+        },
+        {
+            "_id": str(uuid.uuid4()),
+            "username": "enterprise_user_demo",
+            "email": "enterprise@pythonquest.com", 
+            "password": pwd_context.hash("demo123"),
+            "subscription_tier": "enterprise",
+            "profile": {
+                "current_level": 210,
+                "total_xp": 2000,
+                "completed_levels": list(range(100, 210)),
+                "badges": ["first_steps", "problem_solver", "data_master", "python_expert"]
+            },
+            "created_at": datetime.now(timezone.utc)
+        }
+    ]
+    
+    # Insert sample users
+    inserted_users = []
+    for user in sample_users:
+        try:
+            await users_collection.insert_one(user)
+            user.pop("password")  # Remove password from response
+            inserted_users.append(user)
+        except Exception as e:
+            print(f"Error creating user {user['username']}: {e}")
+    
+    return {
+        "success": True,
+        "message": f"Created {len(inserted_users)} sample users",
+        "users": inserted_users,
+        "login_credentials": [
+            {"username": "free_user_demo", "password": "demo123", "tier": "free"},
+            {"username": "pro_user_demo", "password": "demo123", "tier": "pro"}, 
+            {"username": "enterprise_user_demo", "password": "demo123", "tier": "enterprise"}
+        ]
+    }
+
 @app.get("/api/health")
 async def health_check():
     return {"status": "healthy", "timestamp": datetime.now(timezone.utc)}
