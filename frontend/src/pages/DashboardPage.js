@@ -45,7 +45,7 @@ const DashboardPage = () => {
   const fetchDashboardData = async () => {
     try {
       const [levelsResponse, progressResponse] = await Promise.all([
-        axios.get('/api/levels?limit=10'),
+        axios.get('/api/levels?limit=50'), // Increase limit to get more levels
         axios.get('/api/user/progress')
       ]);
       
