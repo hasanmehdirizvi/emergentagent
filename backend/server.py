@@ -597,7 +597,8 @@ async def submit_feedback(level_id: int, feedback_data: LevelFeedback, current_u
 
 async def check_admin_access(current_user: dict = Depends(get_current_user)):
     # Simple admin check - in production, you'd want proper role-based access
-    if current_user["username"] not in ["admin", "administrator"]:
+    # Allow any user with "admin" in their username for testing purposes
+    if "admin" not in current_user["username"].lower():
         raise HTTPException(status_code=403, detail="Admin access required")
     return current_user
 
