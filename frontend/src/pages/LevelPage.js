@@ -308,6 +308,61 @@ const LevelPage = () => {
     }
   };
 
+  const handleAITutor = async () => {
+    // Check subscription limits for free users
+    if (userSubscription?.tier === 'free' && userSubscription?.ai_tutor_remaining <= 0) {
+      toast.error('Daily AI tutor limit reached. Upgrade to Pro for unlimited access!');
+      return;
+    }
+
+    setAiTutorLoading(true);
+    setAiTutorError(null);
+    setShowAITutor(true);
+
+    try {
+      const response = await axios.post(`/api/levels/${levelId}/ai-tutor`);
+      
+      if (response.data.success) {
+        setAiExplanation(response.data.explanation);
+        
+        // Update subscription data if usage changed
+        if (userSubscription?.tier === 'free') {
+          setUserSubscription(prev => ({
+            ...prev,
+            ai_tutor_remaining: Math.max(0, (prev?.ai_tutor_remaining || 3) - 1)
+          }));
+        }
+        
+        toast.success('AI tutor explanation ready!');
+      } else {
+        setAiTutorError(response.data.error);
+        setAiExplanation(response.data.fallback_explanation);
+      }
+    } catch (error) {
+      console.error('AI Tutor error:', error);
+      setAiTutorError('Failed to load AI tutor. Please try again.');
+      setAiExplanation('AI tutor is temporarily unavailable. Try using the hints or check the challenge description for guidance.');
+    } finally {
+      setAiTutorLoading(false);
+    }
+  };
+
+  const getAITutorButtonText = () => {
+    if (!userSubscription) return 'AI Tutor';
+    
+    if (userSubscription.tier === 'free') {
+      return `AI Tutor (${userSubscription.ai_tutor_remaining || 0}/3 left)`;
+    }
+    
+    return 'AI Tutor';
+  };
+
+  const canUseAITutor = () => {
+    if (!userSubscription) return false;
+    if (userSubscription.tier === 'pro' || userSubscription.tier === 'enterprise') return true;
+    return userSubscription.ai_tutor_remaining > 0;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
