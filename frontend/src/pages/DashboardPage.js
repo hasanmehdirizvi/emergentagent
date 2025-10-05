@@ -341,7 +341,6 @@ const DashboardPage = () => {
                   </Card>
                 );
               })
-              )}
             </div>
           </div>
 
