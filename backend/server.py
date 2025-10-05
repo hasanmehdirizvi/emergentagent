@@ -197,7 +197,7 @@ async def init_levels():
             "category": "Python Basics",
             "difficulty": "Easy",
             "xp_reward": 50,
-            "starter_code": "# Welcome to Python! Type your code below\nprint(\"Hello, World!\")",
+            "starter_code": "# Hello World - Your first Python program!\n# In Python, we use the built-in print() function to display output\n# No imports needed for basic print statements\n\n# Print is a function that displays text to the console\nprint(\"Hello, World!\")\n\n# Try changing the message above!\n# Remember: strings must be in quotes\n# You can also print variables:\n# name = \"Python\"\n# print(f\"Hello, {name}!\")",
             "expected_output": "Hello, World!",
             "hints": [
                 "Use the print() function to display text",
