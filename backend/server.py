@@ -1732,6 +1732,229 @@ async def create_sample_paid_users(admin_user: dict = Depends(check_admin_access
         ]
     }
 
+# Additional Admin Endpoints for Full Functionality
+@app.patch("/api/admin/users/{user_id}")
+async def update_user(
+    user_id: str,
+    user_data: dict,
+    admin_user: dict = Depends(check_admin_access)
+):
+    """Update user information"""
+    try:
+        # Update user data
+        update_data = {
+            "username": user_data.get("username"),
+            "email": user_data.get("email"),
+            "subscription_tier": user_data.get("subscription_tier"),
+            "status": user_data.get("status"),
+            "updated_at": datetime.now(timezone.utc),
+            "updated_by": admin_user["_id"]
+        }
+        
+        # Remove None values
+        update_data = {k: v for k, v in update_data.items() if v is not None}
+        
+        result = await users_collection.update_one(
+            {"_id": user_id},
+            {"$set": update_data}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        return {"success": True, "message": "User updated successfully"}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.patch("/api/admin/users/{user_id}/status")
+async def update_user_status(
+    user_id: str,
+    status_data: dict,
+    admin_user: dict = Depends(check_admin_access)
+):
+    """Update user status (active, suspended, etc.)"""
+    try:
+        new_status = status_data.get("status")
+        if new_status not in ["active", "suspended", "inactive"]:
+            raise HTTPException(status_code=400, detail="Invalid status")
+        
+        result = await users_collection.update_one(
+            {"_id": user_id},
+            {
+                "$set": {
+                    "status": new_status,
+                    "status_updated_at": datetime.now(timezone.utc),
+                    "status_updated_by": admin_user["_id"]
+                }
+            }
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        return {"success": True, "message": f"User status updated to {new_status}"}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/admin/levels")
+async def create_level(
+    level_data: dict,
+    admin_user: dict = Depends(check_admin_access)
+):
+    """Create a new level/challenge"""
+    try:
+        level_doc = {
+            "_id": str(uuid.uuid4()),
+            "level_id": int(level_data.get("level_id")),
+            "title": level_data.get("title"),
+            "description": level_data.get("description"),
+            "category": level_data.get("category"),
+            "difficulty": level_data.get("difficulty"),
+            "xp_reward": int(level_data.get("xp_reward", 50)),
+            "starter_code": level_data.get("starter_code"),
+            "expected_output": level_data.get("expected_output"),
+            "hints": level_data.get("hints", []),
+            "prerequisites": [],
+            "is_active": True,
+            "created_at": datetime.now(timezone.utc),
+            "created_by": admin_user["_id"],
+            "problem_type": level_data.get("category", "").lower().replace(" ", "_")
+        }
+        
+        # Check if level_id already exists
+        existing_level = await levels_collection.find_one({"level_id": level_doc["level_id"]})
+        if existing_level:
+            raise HTTPException(status_code=400, detail="Level ID already exists")
+        
+        await levels_collection.insert_one(level_doc)
+        
+        return {
+            "success": True,
+            "message": "Level created successfully",
+            "level_id": level_doc["level_id"]
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/admin/badges")
+async def get_badges(admin_user: dict = Depends(check_admin_access)):
+    """Get all badges and achievements"""
+    # Mock badge data for now
+    badges = [
+        {
+            "id": "first_steps",
+            "name": "First Steps",
+            "description": "Complete your first Python challenge",
+            "icon": "🎯",
+            "criteria": "Complete Level 100",
+            "points": 50,
+            "users_earned": 890
+        },
+        {
+            "id": "problem_solver",
+            "name": "Problem Solver", 
+            "description": "Complete 10 challenges",
+            "icon": "🧩",
+            "criteria": "Complete 10 levels",
+            "points": 200,
+            "users_earned": 456
+        },
+        {
+            "id": "data_master",
+            "name": "Data Master",
+            "description": "Complete all Data Analysis challenges",
+            "icon": "📊",
+            "criteria": "Complete Data Analysis track",
+            "points": 500,
+            "users_earned": 89
+        }
+    ]
+    
+    return {"badges": badges}
+
+@app.post("/api/admin/badges")
+async def create_badge(
+    badge_data: dict,
+    admin_user: dict = Depends(check_admin_access)
+):
+    """Create a new badge/achievement"""
+    badge_doc = {
+        "_id": str(uuid.uuid4()),
+        "name": badge_data.get("name"),
+        "description": badge_data.get("description"),
+        "icon": badge_data.get("icon"),
+        "criteria": badge_data.get("criteria"),
+        "points": int(badge_data.get("points", 0)),
+        "is_active": True,
+        "created_at": datetime.now(timezone.utc),
+        "created_by": admin_user["_id"]
+    }
+    
+    await db.badges.insert_one(badge_doc)
+    
+    return {
+        "success": True,
+        "message": "Badge created successfully",
+        "badge_id": badge_doc["_id"]
+    }
+
+@app.get("/api/admin/support/tickets")
+async def get_support_tickets(admin_user: dict = Depends(check_admin_access)):
+    """Get all support tickets"""
+    # Mock support ticket data
+    tickets = [
+        {
+            "id": "ticket_001",
+            "user_email": "user@example.com",
+            "subject": "Code execution timeout on Level 105",
+            "description": "My code keeps timing out even though it should work fine.",
+            "status": "open",
+            "priority": "high",
+            "created_at": datetime.now(timezone.utc) - timedelta(hours=2),
+            "category": "technical"
+        },
+        {
+            "id": "ticket_002", 
+            "user_email": "learner@example.com",
+            "subject": "Cannot access Pro features after payment",
+            "description": "I paid for Pro but still see limitations.",
+            "status": "in_progress",
+            "priority": "high",
+            "created_at": datetime.now(timezone.utc) - timedelta(days=1),
+            "category": "billing"
+        }
+    ]
+    
+    return {"tickets": tickets}
+
+@app.post("/api/admin/announcements")
+async def create_announcement(
+    announcement_data: dict,
+    admin_user: dict = Depends(check_admin_access)
+):
+    """Create a new announcement"""
+    announcement_doc = {
+        "_id": str(uuid.uuid4()),
+        "title": announcement_data.get("title"),
+        "content": announcement_data.get("content"),
+        "type": announcement_data.get("type", "info"),
+        "target_audience": announcement_data.get("target_audience", "all"),
+        "status": "published",
+        "created_at": datetime.now(timezone.utc),
+        "created_by": admin_user["_id"]
+    }
+    
+    await db.announcements.insert_one(announcement_doc)
+    
+    return {
+        "success": True,
+        "message": "Announcement created successfully",
+        "announcement_id": announcement_doc["_id"]
+    }
+
 @app.get("/api/health")
 async def health_check():
     return {"status": "healthy", "timestamp": datetime.now(timezone.utc)}
