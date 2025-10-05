@@ -52,7 +52,7 @@ const AdminPage = () => {
 
   useEffect(() => {
     // Check admin access
-    if (!currentUser || (currentUser.username !== 'admin' && currentUser.username !== 'administrator')) {
+    if (!currentUser || !currentUser.username?.toLowerCase().includes('admin')) {
       toast.error('Admin access required');
       navigate('/dashboard');
       return;
