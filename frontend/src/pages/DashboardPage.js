@@ -33,8 +33,14 @@ const DashboardPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   useEffect(() => {
+    // Check URL parameters for module selection
+    const urlParams = new URLSearchParams(location.search);
+    const moduleParam = urlParams.get('module');
+    if (moduleParam === 'data-analysis') {
+      setSelectedCategory('Data Analysis');
+    }
     fetchDashboardData();
-  }, []);
+  }, [location.search]);
 
   const fetchDashboardData = async () => {
     try {
