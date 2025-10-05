@@ -10,6 +10,7 @@ from passlib.context import CryptContext
 from motor.motor_asyncio import AsyncIOMotorClient
 import uuid
 import logging
+from emergentintegrations.llm.chat import LlmChat, UserMessage
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
