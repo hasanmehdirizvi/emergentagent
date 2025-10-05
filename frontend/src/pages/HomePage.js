@@ -10,6 +10,7 @@ import { Code, Zap, Trophy, Users, ArrowRight, Play, CheckCircle, Star } from 'l
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   
   const features = [
     {
