@@ -58,6 +58,13 @@ const LevelPage = () => {
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState({ rating: 5, comment: '', category: 'general' });
 
+  // AI Tutor State
+  const [showAITutor, setShowAITutor] = useState(false);
+  const [aiTutorLoading, setAiTutorLoading] = useState(false);
+  const [aiExplanation, setAiExplanation] = useState('');
+  const [userSubscription, setUserSubscription] = useState(null);
+  const [aiTutorError, setAiTutorError] = useState(null);
+
   useEffect(() => {
     fetchLevel();
   }, [levelId]);
