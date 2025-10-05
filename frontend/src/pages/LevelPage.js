@@ -104,8 +104,7 @@ const LevelPage = () => {
           continue;
         }
         
-        const line = lines[i];
-        line = line.trim();
+        let line = lines[i].trim();
         
         if (line.includes('print(')) {
           const printMatch = line.match(/print\s*\(([^)]*)\)/);
