@@ -67,7 +67,22 @@ const LevelPage = () => {
 
   useEffect(() => {
     fetchLevel();
+    fetchUserSubscription();
   }, [levelId]);
+
+  const fetchUserSubscription = async () => {
+    try {
+      const response = await axios.get('/api/user/subscription');
+      setUserSubscription(response.data);
+    } catch (error) {
+      console.error('Failed to fetch subscription:', error);
+      // Set default free subscription
+      setUserSubscription({
+        tier: 'free',
+        limitations: { ai_tutor_uses: 3, ai_tutor_remaining: 3 }
+      });
+    }
+  };
 
   const fetchLevel = async () => {
     try {
