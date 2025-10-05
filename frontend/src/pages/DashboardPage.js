@@ -25,9 +25,12 @@ import axios from 'axios';
 
 const DashboardPage = () => {
   const { currentUser, userStats } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [levels, setLevels] = useState([]);
   const [userProgress, setUserProgress] = useState({});
   const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
   useEffect(() => {
     fetchDashboardData();
