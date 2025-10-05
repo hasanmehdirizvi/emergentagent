@@ -108,7 +108,6 @@ class Token(BaseModel):
     stats: Dict[str, Any]
 
 class LevelFeedback(BaseModel):
-    level_id: int
     user_id: Optional[str] = None
     rating: int  # 1-5 stars
     category: str  # general, difficulty, instructions, bug, suggestion
