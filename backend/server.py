@@ -109,7 +109,7 @@ class Token(BaseModel):
 
 class LevelFeedback(BaseModel):
     user_id: Optional[str] = None
-    rating: int  # 1-5 stars
+    rating: int = Field(..., ge=1, le=5, description="Rating from 1 to 5 stars")
     category: str  # general, difficulty, instructions, bug, suggestion
     comment: str
 
