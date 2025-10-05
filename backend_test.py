@@ -65,33 +65,29 @@ class BackendTester:
             self.log_result("Regular User Creation", False, f"Exception: {str(e)}")
             return False
         
-        # Try to create admin user - try multiple admin usernames
-        admin_usernames = ["administrator", "admin"]
-        admin_created = False
+        # Create admin user with unique username
+        admin_username = f"admin_{uuid.uuid4().hex[:6]}"
+        admin_email = f"{admin_username}@example.com"
+        admin_user_data = {
+            "username": admin_username,
+            "email": admin_email, 
+            "password": "AdminPassword123!"
+        }
         
-        for username in admin_usernames:
-            admin_email = f"{username}_{uuid.uuid4().hex[:8]}@example.com"
-            admin_user_data = {
-                "username": username,
-                "email": admin_email, 
-                "password": "AdminPassword123!"
-            }
-            
-            try:
-                response = requests.post(f"{self.base_url}/auth/signup", 
-                                       json=admin_user_data, headers=self.headers)
-                if response.status_code == 201 or response.status_code == 200:
-                    data = response.json()
-                    self.admin_user_token = data["access_token"]
-                    self.admin_user_id = data["user"]["id"]
-                    self.log_result("Admin User Creation", True, f"Created {username} user")
-                    admin_created = True
-                    break
-            except Exception as e:
-                continue
-        
-        if not admin_created:
-            self.log_result("Admin User Creation", False, "Could not create any admin user")
+        try:
+            response = requests.post(f"{self.base_url}/auth/signup", 
+                                   json=admin_user_data, headers=self.headers)
+            if response.status_code == 201 or response.status_code == 200:
+                data = response.json()
+                self.admin_user_token = data["access_token"]
+                self.admin_user_id = data["user"]["id"]
+                self.log_result("Admin User Creation", True, f"Created admin user: {admin_username}")
+            else:
+                self.log_result("Admin User Creation", False, 
+                              f"Failed to create admin user: {response.status_code}", response.text)
+                return False
+        except Exception as e:
+            self.log_result("Admin User Creation", False, f"Exception: {str(e)}")
             return False
         
         return True
