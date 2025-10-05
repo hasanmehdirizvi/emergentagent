@@ -76,7 +76,14 @@ const DashboardPage = () => {
     return Math.min((currentLevelXP / 100) * 100, 100);
   };
 
-  const availableLevels = levels.filter(level => 
+  // Filter levels by category and accessibility
+  const filteredLevels = levels.filter(level => {
+    const categoryMatch = selectedCategory === 'all' || level.category === selectedCategory;
+    return categoryMatch;
+  });
+
+  // Further filter for available levels (accessible to user)
+  const availableLevels = filteredLevels.filter(level => 
     level.level_id <= (userStats?.current_level || 100)
   );
 
