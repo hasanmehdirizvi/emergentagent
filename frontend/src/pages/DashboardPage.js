@@ -216,11 +216,66 @@ const DashboardPage = () => {
                 <CardContent className="pt-4">
                   <div className="flex items-center space-x-3">
                     <BarChart3 className="h-8 w-8 text-blue-500" />
-                    <div>
+                    <div className="flex-1">
                       <h3 className="text-lg font-semibold text-blue-900">Data Analysis Track</h3>
                       <p className="text-blue-700 text-sm">
                         Master data manipulation, statistics, and analysis with Python. Start with Level 200!
                       </p>
+                    </div>
+                    {(userStats?.subscription_tier === 'pro' || userStats?.subscription_tier === 'enterprise') && (
+                      <div className="flex items-center space-x-1 text-purple-600">
+                        <Crown className="h-4 w-4" />
+                        <span className="text-xs font-semibold">PREMIUM ACCESS</span>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Premium User Quick Navigation */}
+            {(userStats?.subscription_tier === 'pro' || userStats?.subscription_tier === 'enterprise') && (
+              <Card className="glass-card border-0 bg-gradient-to-r from-purple-50 to-pink-50 mb-4">
+                <CardContent className="pt-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <Crown className="h-8 w-8 text-purple-500" />
+                      <div>
+                        <h3 className="text-lg font-semibold text-purple-900">Premium Topic Jumping</h3>
+                        <p className="text-purple-700 text-sm">
+                          Jump to any topic or level instantly - no restrictions!
+                        </p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button
+                        size="sm"
+                        onClick={() => navigate('/level/100')}
+                        className="bg-green-500 hover:bg-green-600"
+                      >
+                        Python Basics
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={() => navigate('/level/200')}
+                        className="bg-blue-500 hover:bg-blue-600"
+                      >
+                        Data Analysis
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={() => navigate('/level/105')}
+                        className="bg-orange-500 hover:bg-orange-600"
+                      >
+                        Projects
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={() => navigate('/level/103')}
+                        className="bg-red-500 hover:bg-red-600"
+                      >
+                        Control Flow
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
