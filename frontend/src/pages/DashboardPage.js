@@ -340,7 +340,8 @@ const DashboardPage = () => {
                     </CardContent>
                   </Card>
                 );
-              })}
+              })
+              )}
             </div>
           </div>
 
