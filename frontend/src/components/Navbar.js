@@ -122,6 +122,12 @@ const Navbar = () => {
                       <Trophy className="mr-2 h-4 w-4" />
                       <span>Leaderboard</span>
                     </DropdownMenuItem>
+                    {(currentUser?.username === 'admin' || currentUser?.username === 'administrator') && (
+                      <DropdownMenuItem onClick={() => navigate('/admin')}>
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>Admin Panel</span>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout} data-testid="logout-button">
                       <LogOut className="mr-2 h-4 w-4" />
