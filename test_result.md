@@ -480,7 +480,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Data Analysis levels accessibility investigation"
+    - "AI Tutor system with subscription tiers"
+    - "Enhanced challenge content with import statements"
+    - "Premium gamification features and topic jumping"
+    - "Subscription management and tier indicators"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
