@@ -143,16 +143,16 @@ frontend:
         comment: "Feedback form UI completed with rating, category selection, and comment submission"
 
   - task: "Admin dashboard for feedback management"
-    implemented: false
+    implemented: true
     working: "NA"
-    file: "to_be_created"
+    file: "/app/frontend/src/pages/AdminPage.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
-        comment: "Admin dashboard needs to be created with view, filter, and status update capabilities"
+        comment: "Admin dashboard created with comprehensive feedback management, filtering, statistics, and status updates - ready for testing"
 
 metadata:
   created_by: "main_agent"
