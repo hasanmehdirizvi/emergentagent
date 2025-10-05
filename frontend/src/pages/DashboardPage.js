@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Progress } from '../components/ui/progress';
 import { Badge } from '../components/ui/badge';
 import { Avatar, AvatarFallback } from '../components/ui/avatar';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { 
   Code, 
   Trophy, 
@@ -15,7 +16,9 @@ import {
   Star, 
   Play, 
   Lock, 
-  CheckCircle
+  CheckCircle,
+  Filter,
+  BarChart3
 } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios';
