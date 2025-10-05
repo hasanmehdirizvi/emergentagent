@@ -331,7 +331,7 @@ async def init_levels():
                 "Access city using row[2] for each row",
                 "Use dictionary to count: city_count[city] = city_count.get(city, 0) + 1"
             ],
-            "prerequisites": [200],
+            "prerequisites": [],
             "is_active": True,
             "problem_type": "data_analysis",
             "tutorial_links": ["lists", "dictionaries", "csv"]
