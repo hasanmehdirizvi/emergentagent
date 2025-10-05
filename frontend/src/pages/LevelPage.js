@@ -423,6 +423,33 @@ const LevelPage = () => {
               <Lightbulb className="mr-2 h-4 w-4" />
               Get Hint (-10 pts)
             </Button>
+            <Button
+              onClick={handleAITutor}
+              disabled={!canUseAITutor() || aiTutorLoading}
+              className={`flex items-center space-x-2 ${
+                userSubscription?.tier === 'pro' || userSubscription?.tier === 'enterprise' 
+                  ? 'bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600' 
+                  : ''
+              }`}
+              variant={canUseAITutor() ? 'default' : 'outline'}
+            >
+              {aiTutorLoading ? (
+                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+              ) : (
+                <>
+                  <Brain className="h-4 w-4" />
+                  {userSubscription?.tier === 'pro' || userSubscription?.tier === 'enterprise' ? (
+                    <Sparkles className="h-3 w-3" />
+                  ) : !canUseAITutor() ? (
+                    <Lock className="h-3 w-3" />
+                  ) : null}
+                </>
+              )}
+              <span>{getAITutorButtonText()}</span>
+              {userSubscription?.tier === 'pro' || userSubscription?.tier === 'enterprise' ? (
+                <Crown className="h-3 w-3" />
+              ) : null}
+            </Button>
             <Button 
               variant="outline" 
               onClick={() => setShowTutorials(!showTutorials)}
