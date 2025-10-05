@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the Data Analysis module selection and navigation functionality in the gamified Python learning application PythonQuest"
+user_problem_statement: "Test the enhanced admin panel functionality including authentication setup, admin panel access, all tabs functionality (Overview, Users, Feedback, Issues, Testing), and error scenarios"
 
 backend:
   - task: "Data Analysis levels backend implementation"
