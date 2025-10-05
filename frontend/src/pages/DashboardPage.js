@@ -83,9 +83,14 @@ const DashboardPage = () => {
   });
 
   // Further filter for available levels (accessible to user)
-  const availableLevels = filteredLevels.filter(level => 
-    level.level_id <= (userStats?.current_level || 100)
-  );
+  const availableLevels = filteredLevels.filter(level => {
+    // For Data Analysis track, make all levels available regardless of current level
+    if (selectedCategory === 'Data Analysis') {
+      return true;
+    }
+    // For other tracks, use current level restriction
+    return level.level_id <= (userStats?.current_level || 100);
+  });
 
   if (loading) {
     return (
