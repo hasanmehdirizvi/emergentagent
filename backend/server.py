@@ -305,11 +305,12 @@ async def init_levels():
             "starter_code": "# Data Analysis Basics\n# Import statements for data analysis (learn about imports!)\nimport statistics  # For statistical functions\nimport math        # For mathematical operations\n\n# Let's work with a list of test scores\nscores = [85, 92, 78, 96, 88, 76, 91, 84, 89, 93]\n\n# Method 1: Calculate the mean manually\ntotal = sum(scores)  # Built-in sum() function\ncount = len(scores)  # Built-in len() function\nmean = total / count\n\n# Method 2: Using statistics module (more professional)\n# mean_stats = statistics.mean(scores)\n\n# Find the maximum and minimum scores\nmax_score = max(scores)  # Built-in max() function\nmin_score = min(scores)  # Built-in min() function\n\n# Print results rounded to 1 decimal place\nprint(f\"Mean: {round(mean, 1)}\")\nprint(f\"Max: {max_score}\")\nprint(f\"Min: {min_score}\")\n\n# Bonus: Try using the statistics module!\n# print(f\"Mean (statistics): {round(statistics.mean(scores), 1)}\")",
             "expected_output": "Mean: 87.2\nMax: 96\nMin: 76",
             "hints": [
-                "Use sum(data) to add all numbers in the list",
-                "Use len(data) to get the count of items",
-                "Mean = sum / count",
-                "Use max(data) and min(data) for maximum and minimum",
-                "Round the mean to 1 decimal place"
+                "Use sum(scores) to add all numbers in the list",
+                "Use len(scores) to get the count of items", 
+                "Mean = total / count",
+                "Use max(scores) and min(scores) for maximum and minimum",
+                "The code shows you how to use built-in functions",
+                "Try the statistics module for more advanced operations"
             ],
             "prerequisites": [],
             "is_active": True,
