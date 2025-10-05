@@ -1566,7 +1566,7 @@ const FullyFunctionalAdminPanel = () => {
               </div>
             </div>
           </DialogContent>
-        </Modal>
+        </Dialog>
       )}
     </div>
   );
