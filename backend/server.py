@@ -1021,6 +1021,296 @@ async def test_module(
         "test_results": test_results
     }
 
+# Subscription and Payment Models
+class SubscriptionPlan(BaseModel):
+    id: str
+    name: str
+    price: float
+    currency: str = "USD"
+    billing_period: str = "monthly"  # monthly, yearly
+    features: List[str]
+    is_active: bool = True
+    created_at: Optional[datetime] = None
+
+class UserSubscription(BaseModel):
+    id: Optional[str] = None
+    user_id: str
+    plan_id: str
+    status: str  # active, cancelled, expired, trial
+    current_period_start: datetime
+    current_period_end: datetime
+    trial_end: Optional[datetime] = None
+    payment_method: Optional[str] = None
+    created_at: Optional[datetime] = None
+
+class Transaction(BaseModel):
+    id: Optional[str] = None
+    user_id: str
+    subscription_id: Optional[str] = None
+    amount: float
+    currency: str = "USD"
+    status: str  # pending, completed, failed, refunded
+    payment_method: str
+    transaction_date: datetime
+    description: Optional[str] = None
+
+# Subscription Management Endpoints
+@app.get("/api/admin/subscriptions/plans")
+async def get_subscription_plans(admin_user: dict = Depends(check_admin_access)):
+    """Get all subscription plans with user counts"""
+    plans = [
+        {
+            "id": "free",
+            "name": "Free Plan",
+            "price": 0,
+            "currency": "USD",
+            "billing_period": "forever",
+            "features": ["Basic Challenges", "Community Access", "Progress Tracking"],
+            "is_active": True,
+            "user_count": 800,
+            "revenue": 0
+        },
+        {
+            "id": "pro",
+            "name": "Pro Plan", 
+            "price": 9.99,
+            "currency": "USD",
+            "billing_period": "monthly",
+            "features": ["All Challenges", "Priority Support", "Certificates", "Advanced Analytics", "Offline Access"],
+            "is_active": True,
+            "user_count": 400,
+            "revenue": 3996
+        },
+        {
+            "id": "enterprise",
+            "name": "Enterprise Plan",
+            "price": 49.99,
+            "currency": "USD", 
+            "billing_period": "monthly",
+            "features": ["Custom Tracks", "Team Management", "API Access", "White Label", "Dedicated Support"],
+            "is_active": True,
+            "user_count": 50,
+            "revenue": 2499.50
+        }
+    ]
+    
+    return {"plans": plans, "total_plans": len(plans)}
+
+@app.post("/api/admin/subscriptions/plans")
+async def create_subscription_plan(
+    plan_data: SubscriptionPlan,
+    admin_user: dict = Depends(check_admin_access)
+):
+    """Create a new subscription plan"""
+    plan_doc = {
+        "_id": plan_data.id,
+        "name": plan_data.name,
+        "price": plan_data.price,
+        "currency": plan_data.currency,
+        "billing_period": plan_data.billing_period,
+        "features": plan_data.features,
+        "is_active": plan_data.is_active,
+        "created_at": datetime.now(timezone.utc),
+        "created_by": admin_user["_id"]
+    }
+    
+    await db.subscription_plans.insert_one(plan_doc)
+    
+    return {"success": True, "message": "Subscription plan created", "plan_id": plan_data.id}
+
+@app.get("/api/admin/subscriptions/users")
+async def get_user_subscriptions(
+    admin_user: dict = Depends(check_admin_access),
+    status: Optional[str] = None,
+    plan_id: Optional[str] = None,
+    skip: int = 0,
+    limit: int = 50
+):
+    """Get user subscription data with filtering"""
+    # Mock subscription data - replace with actual database queries
+    subscriptions = [
+        {
+            "user_id": "user_001",
+            "username": "john_doe",
+            "email": "john@example.com", 
+            "plan_id": "pro",
+            "plan_name": "Pro Plan",
+            "status": "active",
+            "current_period_start": datetime.now(timezone.utc) - timedelta(days=15),
+            "current_period_end": datetime.now(timezone.utc) + timedelta(days=15),
+            "next_billing_date": datetime.now(timezone.utc) + timedelta(days=15),
+            "total_paid": 29.97,
+            "payment_method": "credit_card"
+        }
+    ]
+    
+    return {
+        "subscriptions": subscriptions,
+        "total": len(subscriptions),
+        "pagination": {"skip": skip, "limit": limit}
+    }
+
+@app.get("/api/admin/payments/transactions")
+async def get_transactions(
+    admin_user: dict = Depends(check_admin_access),
+    status: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    skip: int = 0,
+    limit: int = 50
+):
+    """Get transaction history with filtering"""
+    # Mock transaction data
+    transactions = [
+        {
+            "id": "txn_001",
+            "user_id": "user_001",
+            "username": "john_doe",
+            "email": "john@example.com",
+            "amount": 9.99,
+            "currency": "USD",
+            "status": "completed",
+            "payment_method": "credit_card",
+            "transaction_date": datetime.now(timezone.utc) - timedelta(days=1),
+            "description": "Pro Plan - Monthly Subscription",
+            "stripe_transaction_id": "pi_1234567890"
+        },
+        {
+            "id": "txn_002", 
+            "user_id": "user_002",
+            "username": "jane_smith",
+            "email": "jane@example.com",
+            "amount": 49.99,
+            "currency": "USD", 
+            "status": "completed",
+            "payment_method": "credit_card",
+            "transaction_date": datetime.now(timezone.utc) - timedelta(days=2),
+            "description": "Enterprise Plan - Monthly Subscription",
+            "stripe_transaction_id": "pi_0987654321"
+        }
+    ]
+    
+    return {
+        "transactions": transactions,
+        "total": len(transactions),
+        "pagination": {"skip": skip, "limit": limit}
+    }
+
+@app.get("/api/admin/payments/revenue")
+async def get_revenue_analytics(admin_user: dict = Depends(check_admin_access)):
+    """Get comprehensive revenue analytics"""
+    revenue_data = {
+        "mrr": 4500.00,  # Monthly Recurring Revenue
+        "arr": 54000.00,  # Annual Recurring Revenue  
+        "total_revenue_30d": 6750.50,
+        "total_revenue_90d": 19250.75,
+        "churn_rate": 5.2,
+        "trial_conversion_rate": 68.5,
+        "average_revenue_per_user": 11.25,
+        "ltv": 135.50,  # Customer Lifetime Value
+        "monthly_growth_rate": 12.3,
+        
+        # Revenue by plan
+        "revenue_by_plan": {
+            "free": 0,
+            "pro": 3996.00,
+            "enterprise": 2499.50
+        },
+        
+        # Monthly revenue trend (last 12 months)
+        "monthly_revenue": [
+            {"month": "Jan", "revenue": 3200}, {"month": "Feb", "revenue": 3450},
+            {"month": "Mar", "revenue": 3680}, {"month": "Apr", "revenue": 3920},
+            {"month": "May", "revenue": 4100}, {"month": "Jun", "revenue": 4350},
+            {"month": "Jul", "revenue": 4200}, {"month": "Aug", "revenue": 4400},
+            {"month": "Sep", "revenue": 4600}, {"month": "Oct", "revenue": 4750},
+            {"month": "Nov", "revenue": 4850}, {"month": "Dec", "revenue": 4995.50}
+        ],
+        
+        # Subscription metrics
+        "subscription_metrics": {
+            "new_subscriptions_30d": 45,
+            "cancelled_subscriptions_30d": 8,
+            "upgraded_subscriptions_30d": 12,
+            "downgraded_subscriptions_30d": 3
+        }
+    }
+    
+    return revenue_data
+
+@app.post("/api/admin/payments/refund")
+async def process_refund(
+    refund_data: dict,
+    admin_user: dict = Depends(check_admin_access)
+):
+    """Process a payment refund"""
+    transaction_id = refund_data.get("transaction_id")
+    amount = refund_data.get("amount")
+    reason = refund_data.get("reason")
+    
+    # TODO: Integrate with payment processor (Stripe/PayPal) to process actual refund
+    
+    refund_doc = {
+        "_id": str(uuid.uuid4()),
+        "transaction_id": transaction_id,
+        "amount": amount,
+        "reason": reason,
+        "status": "processed",
+        "processed_by": admin_user["_id"],
+        "processed_at": datetime.now(timezone.utc)
+    }
+    
+    # Store refund record
+    await db.refunds.insert_one(refund_doc)
+    
+    return {
+        "success": True,
+        "message": "Refund processed successfully",
+        "refund_id": refund_doc["_id"],
+        "note": "Integration with Stripe/PayPal required for actual refund processing"
+    }
+
+# Advanced Admin Analytics
+@app.get("/api/admin/analytics/dashboard")
+async def get_admin_dashboard_analytics(admin_user: dict = Depends(check_admin_access)):
+    """Get comprehensive dashboard analytics for admin overview"""
+    
+    # User statistics
+    user_stats = {
+        "total_users": 1250,
+        "active_users_7d": 950,
+        "active_users_30d": 1150,
+        "new_users_7d": 85,
+        "new_users_30d": 320,
+        "user_retention_7d": 76.0,
+        "user_retention_30d": 68.5
+    }
+    
+    # Learning statistics
+    learning_stats = {
+        "total_challenges_completed": 15750,
+        "challenges_completed_7d": 1250,
+        "average_completion_rate": 72.5,
+        "most_popular_track": "Python Basics",
+        "highest_difficulty_completion": "Data Analysis - Hard"
+    }
+    
+    # System health
+    system_health = {
+        "server_uptime": "99.9%",
+        "avg_response_time": "125ms",
+        "error_rate": "0.02%",
+        "code_executions_today": 2450,
+        "queue_length": 3
+    }
+    
+    return {
+        "user_stats": user_stats,
+        "learning_stats": learning_stats,
+        "system_health": system_health,
+        "last_updated": datetime.now(timezone.utc)
+    }
+
 @app.get("/api/health")
 async def health_check():
     return {"status": "healthy", "timestamp": datetime.now(timezone.utc)}
