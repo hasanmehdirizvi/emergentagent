@@ -9,6 +9,7 @@ import DashboardPage from './pages/DashboardPage';
 import LevelPage from './pages/LevelPage';
 import ProfilePage from './pages/ProfilePage';
 import LeaderboardPage from './pages/LeaderboardPage';
+import AdminPage from './pages/AdminPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
