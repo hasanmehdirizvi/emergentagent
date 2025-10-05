@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the enhanced admin panel functionality including authentication setup, admin panel access, all tabs functionality (Overview, Users, Feedback, Issues, Testing), and error scenarios"
+user_problem_statement: "Test the comprehensive admin panel with full navigation and payment features including authentication setup, 8-section navigation structure (Dashboard, Users, Content, Gamification, Payments, Analytics, Support, Settings), dashboard overview with statistics, payment management with Plans/Transactions/Reports subsections, enhanced user management, and UI/UX testing"
 
 backend:
   - task: "Admin authentication and access control"
