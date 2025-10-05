@@ -206,8 +206,47 @@ const DashboardPage = () => {
               </Link>
             </div>
 
+            {selectedCategory === 'Data Analysis' && (
+              <Card className="glass-card border-0 bg-gradient-to-r from-blue-50 to-indigo-50 mb-4">
+                <CardContent className="pt-4">
+                  <div className="flex items-center space-x-3">
+                    <BarChart3 className="h-8 w-8 text-blue-500" />
+                    <div>
+                      <h3 className="text-lg font-semibold text-blue-900">Data Analysis Track</h3>
+                      <p className="text-blue-700 text-sm">
+                        Master data manipulation, statistics, and analysis with Python. Start with Level 200!
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             <div className="space-y-4">
-              {availableLevels.map((level) => {
+              {availableLevels.length === 0 ? (
+                <Card className="glass-card border-0">
+                  <CardContent className="pt-6 text-center">
+                    <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-gray-700 mb-2">
+                      {selectedCategory === 'Data Analysis' 
+                        ? 'Data Analysis Levels Coming Soon!' 
+                        : 'No levels available in this category'}
+                    </h3>
+                    <p className="text-gray-600 text-sm mb-4">
+                      {selectedCategory === 'Data Analysis'
+                        ? 'Complete the Python Basics levels first to unlock Data Analysis challenges.'
+                        : 'Try selecting a different category or continue with your current progress.'}
+                    </p>
+                    <Button
+                      onClick={() => setSelectedCategory('all')}
+                      variant="outline"
+                    >
+                      View All Levels
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : (
+                availableLevels.map((level) => {
                 const progress = userProgress[level.level_id];
                 const isCompleted = progress?.is_completed;
                 const isLocked = level.level_id > (userStats?.current_level || 100);
