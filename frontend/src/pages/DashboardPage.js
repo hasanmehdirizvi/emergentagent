@@ -173,7 +173,24 @@ const DashboardPage = () => {
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold">Continue Learning</h2>
+              <div className="flex items-center space-x-4">
+                <h2 className="text-2xl font-bold">Continue Learning</h2>
+                <div className="flex items-center space-x-2">
+                  <Filter className="h-4 w-4 text-gray-500" />
+                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                    <SelectTrigger className="w-48">
+                      <SelectValue placeholder="Select Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Categories</SelectItem>
+                      <SelectItem value="Python Basics">🐍 Python Basics</SelectItem>
+                      <SelectItem value="Control Flow">🔄 Control Flow</SelectItem>
+                      <SelectItem value="Data Analysis">📊 Data Analysis</SelectItem>
+                      <SelectItem value="Comprehensive Project">🚀 Projects</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
               <Link to={`/level/${userStats?.current_level || 100}`}>
                 <Button className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600">
                   <Play className="mr-2 h-4 w-4" />
