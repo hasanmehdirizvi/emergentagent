@@ -245,7 +245,7 @@ const DashboardPage = () => {
                     </Button>
                   </CardContent>
                 </Card>
-              ) : 
+              ) : (
                 availableLevels.map((level) => {
                 const progress = userProgress[level.level_id];
                 const isCompleted = progress?.is_completed;
