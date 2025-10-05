@@ -596,18 +596,120 @@ async def submit_feedback(level_id: int, feedback_data: LevelFeedback, current_u
         logger.error(f"Failed to submit feedback: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to submit feedback")
 
-@app.get("/api/admin/feedback")
-async def get_all_feedback(current_user: dict = Depends(get_current_user), skip: int = 0, limit: int = 50):
+async def check_admin_access(current_user: dict = Depends(get_current_user)):
     # Simple admin check - in production, you'd want proper role-based access
-    if current_user["username"] != "admin":
+    if current_user["username"] not in ["admin", "administrator"]:
         raise HTTPException(status_code=403, detail="Admin access required")
+    return current_user
+
+@app.get("/api/admin/feedback")
+async def get_all_feedback(
+    admin_user: dict = Depends(check_admin_access),
+    skip: int = 0, 
+    limit: int = 50,
+    status: Optional[str] = None,
+    category: Optional[str] = None,
+    level_id: Optional[int] = None,
+    user_id: Optional[str] = None
+):
+    # Build filter query
+    filter_query = {}
+    if status:
+        filter_query["status"] = status
+    if category:
+        filter_query["category"] = category
+    if level_id:
+        filter_query["level_id"] = level_id
+    if user_id:
+        filter_query["user_id"] = user_id
     
-    feedback_cursor = feedback_collection.find().sort("submitted_at", -1).skip(skip).limit(limit)
+    feedback_cursor = feedback_collection.find(filter_query).sort("submitted_at", -1).skip(skip).limit(limit)
     feedback_list = await feedback_cursor.to_list(length=limit)
+    
+    # Get statistics
+    total_feedback = await feedback_collection.count_documents(filter_query)
+    pending_count = await feedback_collection.count_documents({"status": "pending"})
+    reviewed_count = await feedback_collection.count_documents({"status": "reviewed"})
+    resolved_count = await feedback_collection.count_documents({"status": "resolved"})
     
     return {
         "feedback": feedback_list,
-        "total": await feedback_collection.count_documents({})
+        "total": total_feedback,
+        "statistics": {
+            "pending": pending_count,
+            "reviewed": reviewed_count,
+            "resolved": resolved_count,
+            "total_all": pending_count + reviewed_count + resolved_count
+        },
+        "pagination": {
+            "skip": skip,
+            "limit": limit,
+            "has_more": total_feedback > skip + limit
+        }
+    }
+
+@app.patch("/api/admin/feedback/{feedback_id}/status")
+async def update_feedback_status(
+    feedback_id: str,
+    status_update: dict,
+    admin_user: dict = Depends(check_admin_access)
+):
+    valid_statuses = ["pending", "reviewed", "resolved"]
+    new_status = status_update.get("status")
+    
+    if new_status not in valid_statuses:
+        raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {valid_statuses}")
+    
+    # Update feedback status
+    result = await feedback_collection.update_one(
+        {"_id": feedback_id},
+        {
+            "$set": {
+                "status": new_status,
+                "updated_at": datetime.now(timezone.utc),
+                "updated_by": admin_user["_id"]
+            }
+        }
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Feedback not found")
+    
+    return {"success": True, "message": f"Feedback status updated to {new_status}"}
+
+@app.get("/api/admin/feedback/statistics")
+async def get_feedback_statistics(admin_user: dict = Depends(check_admin_access)):
+    # Get overall statistics
+    total_feedback = await feedback_collection.count_documents({})
+    
+    # Status breakdown
+    status_stats = await feedback_collection.aggregate([
+        {"$group": {"_id": "$status", "count": {"$sum": 1}}}
+    ]).to_list(length=None)
+    
+    # Category breakdown
+    category_stats = await feedback_collection.aggregate([
+        {"$group": {"_id": "$category", "count": {"$sum": 1}}}
+    ]).to_list(length=None)
+    
+    # Rating distribution
+    rating_stats = await feedback_collection.aggregate([
+        {"$group": {"_id": "$rating", "count": {"$sum": 1}}},
+        {"$sort": {"_id": 1}}
+    ]).to_list(length=None)
+    
+    # Recent feedback count (last 7 days)
+    week_ago = datetime.now(timezone.utc) - timedelta(days=7)
+    recent_feedback = await feedback_collection.count_documents({
+        "submitted_at": {"$gte": week_ago}
+    })
+    
+    return {
+        "total_feedback": total_feedback,
+        "recent_feedback": recent_feedback,
+        "status_breakdown": {item["_id"]: item["count"] for item in status_stats},
+        "category_breakdown": {item["_id"]: item["count"] for item in category_stats},
+        "rating_distribution": {str(item["_id"]): item["count"] for item in rating_stats}
     }
 
 @app.get("/api/health")
